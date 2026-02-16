@@ -2,20 +2,25 @@ using static Globals;
 
 public class TripleShot : ModifierBase
 {
-    public override void OnBulletFiredAction()
+    protected override void OnBulletFiredAction()
     {
-        ShootBullet(new BulletData()
+        if (TryProcModifier())
         {
-            SpreadX = 10,
-            SpreadY = 0,
-            BulletSpeed = 35
-        });
+            ShootBullet(new BulletData()
+            {
+                AngularOffsetX = 10,
+                AngularOffsetY = 0,
+                BulletSpeed = 35,
+                Damage = GunBrain.CalculatedDamage * 0.50f
+            });
         
-        ShootBullet(new BulletData()
-        {
-            SpreadX = -10,
-            SpreadY = 0,
-            BulletSpeed = 35
-        });
+            ShootBullet(new BulletData()
+            {
+                AngularOffsetX = -10,
+                AngularOffsetY = 0,
+                BulletSpeed = 35,
+                Damage = GunBrain.CalculatedDamage * 0.50f
+            });
+        }
     }
 }

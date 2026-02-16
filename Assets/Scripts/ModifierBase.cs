@@ -15,13 +15,8 @@ public abstract class ModifierBase : MonoBehaviour
     public string DisplayName;
 
     #region abstract methods
-    public abstract void OnBulletFiredAction();
+    protected abstract void OnBulletFiredAction();
     #endregion
-
-    public void Update()
-    {
-        UpdateData();
-    }
 
     public void ShootBullet(BulletData bData)
     {
@@ -45,6 +40,7 @@ public abstract class ModifierBase : MonoBehaviour
     private void OnDisable()
     {
         GunBrain.OnBulletFired -= OnBulletFiredAction;
+        GunBrain.OnModifierChanged -= UpdateData;
     }
 
     public void UpdateData()
@@ -55,7 +51,7 @@ public abstract class ModifierBase : MonoBehaviour
             {
                 ProcChance = Data.ProcChancePerLevel[ModifierLevel - 1];
             }
-
+ 
             if (Data.CooldownPerLevel.Count >= ModifierLevel)
             {
                 Cooldown = Data.CooldownPerLevel[ModifierLevel - 1];
@@ -66,7 +62,12 @@ public abstract class ModifierBase : MonoBehaviour
                 EffectAmount = Data.EffectAmountPerLevel[ModifierLevel - 1];
             }
 
-            DisplayName = $"{Data.EnhancementName} {(ModifierLevel).IntToRomalNumeral()}";
+            DisplayName = $"{Data.ModifierName} {(ModifierLevel).IntToRomalNumeral()}";
         }
+    }
+
+    public bool TryProcModifier()
+    {
+        return ProcChance > 100 - Random.Range(1, 101);
     }
 }
