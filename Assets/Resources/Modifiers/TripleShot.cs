@@ -1,8 +1,9 @@
+using UnityEngine;
 using static Globals;
 
-public class TripleShot : ModifierBase
+public class TripleShot : BulletBasedModifier
 {
-    protected override void OnBulletFiredAction()
+    protected override void OnActionPerformedEvent()
     {
         if (TryProcModifier())
         {
@@ -11,7 +12,7 @@ public class TripleShot : ModifierBase
                 AngularOffsetX = 10,
                 AngularOffsetY = 0,
                 BulletSpeed = 35,
-                Damage = GunBrain.CalculatedDamage * 0.50f
+                Damage = AttachedEnhanceableBase.CalculatedDamage * 0.50f
             });
         
             ShootBullet(new BulletData()
@@ -19,7 +20,7 @@ public class TripleShot : ModifierBase
                 AngularOffsetX = -10,
                 AngularOffsetY = 0,
                 BulletSpeed = 35,
-                Damage = GunBrain.CalculatedDamage * 0.50f
+                Damage = AttachedEnhanceableBase.CalculatedDamage * 0.50f
             });
         }
     }

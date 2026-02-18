@@ -6,26 +6,21 @@ using System.Linq;
 using UnityEngine;
 using static Globals;
 
-public class GunBrain : MonoBehaviour
+public class GunBrain : EnhanceableBase
 {
-    public List<ModifierBase> modifiers;
     public WeaponData WeaponData;
     public GameObject BulletGO;
     public LayerMask hitLayers;
 
     public float bulletGravity;
 
-    public static event Action OnBulletFired;
-    public static event Action OnModifierChanged;
-
     private float BaseDamage => WeaponData?.m_damage ?? 1;
-    public float CalculatedDamage;
 
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            OnBulletFired?.Invoke();
+            CallMyActionPerformedEvent();
 
             ShootBullet(new BulletData()
             { 
@@ -37,7 +32,20 @@ public class GunBrain : MonoBehaviour
 
     private void OnEnable()
     {
-        CalculateWeaponStats();
+        ClearNullModifiers();
+        OnModifiersChanged += CalculateWeaponStats;
+
+        BulletGO = (GameObject)Resources.Load("Bullet");
+
+        if (modifiers.Any())
+        {
+            CalculateWeaponStats();
+        }
+    }
+
+    private void OnDisable()
+    {
+        OnModifiersChanged -= CalculateWeaponStats;
     }
 
     public void CalculateWeaponStats()
@@ -133,56 +141,6 @@ public class GunBrain : MonoBehaviour
         _trail.transform.position = _hit;
 
         Destroy(_trail.gameObject, _trail.time);
-    }
-    #endregion
-
-    #region editor buttons
-    [ProButton]
-    public void UpdateModifier(bool IsUpgrading, ModifierType ModifierType)
-    {
-        var modifierTypeString = ModifierType.ToString();
-
-        if (string.IsNullOrWhiteSpace(modifierTypeString)) return;
-
-        var type = Type.GetType(modifierTypeString);
-
-        if (type != null)
-        {
-            if (modifiers.Select(item => item.Data.InternalName).Contains(modifierTypeString))
-            {
-                ModifierBase existingModifier = (ModifierBase)gameObject.GetComponent(type);
-
-                if (IsUpgrading)
-                {
-                    if (existingModifier.ModifierLevel < existingModifier.Data.MaxLevel)
-                    {
-                        existingModifier.ModifierLevel++;
-                    }
-                }
-                else 
-                {
-                    if (existingModifier.ModifierLevel > 1)
-                    {
-                        existingModifier.ModifierLevel--;
-                    }
-                    else
-                    {
-                        modifiers.Remove(existingModifier);
-                        Destroy(existingModifier);
-                    }
-                }
-            }
-            else if (IsUpgrading)
-            {
-                var newModifier = (ModifierBase)gameObject.AddComponent(type);
-                newModifier.Data = (ModifierData)Resources.Load($"Modifiers/{modifierTypeString}_data");
-                modifiers.Add(newModifier);
-            }
-        }
-
-        CalculateWeaponStats();
-
-        OnModifierChanged?.Invoke();
     }
     #endregion
 }

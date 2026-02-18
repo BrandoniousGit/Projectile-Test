@@ -1,11 +1,13 @@
+using System;
 using System.Linq;
 using UnityEngine;
 using static Globals;
 
 public abstract class ModifierBase : MonoBehaviour
 {
+    public EnhanceableBase AttachedEnhanceableBase { get; set; }
+
     public ModifierData Data;
-    public GunBrain GunBrain;
     public int ModifierLevel = 1;
 
     public float ProcChance;
@@ -14,33 +16,26 @@ public abstract class ModifierBase : MonoBehaviour
 
     public string DisplayName;
 
-    #region abstract methods
-    protected abstract void OnBulletFiredAction();
+    #region virtual methods
+    protected virtual void OnActionPerformedEvent() { return; }
+    protected virtual void OnEnableExtras() { return; }
+    protected virtual void OnDisableExtras() { return; }
     #endregion
-
-    public void ShootBullet(BulletData bData)
-    {
-        GunBrain.ShootBullet(bData);
-    }
 
     private void OnEnable()
     {
-        GunBrain.OnBulletFired += OnBulletFiredAction;
-        GunBrain.OnModifierChanged += UpdateData;
+        EnhanceableBase.OnModifiersChanged += UpdateData;
+        EnhanceableBase.OnActionPerformed += OnActionPerformedEvent;
 
-        if (TryGetComponent<GunBrain>(out var brain))
-        {
-            GunBrain = brain;
-            return;
-        }
-
-        Debug.Log("Could not find gun brain");
+        OnEnableExtras();
     }
 
     private void OnDisable()
     {
-        GunBrain.OnBulletFired -= OnBulletFiredAction;
-        GunBrain.OnModifierChanged -= UpdateData;
+        EnhanceableBase.OnModifiersChanged -= UpdateData;
+        EnhanceableBase.OnActionPerformed -= OnActionPerformedEvent;
+
+        OnDisableExtras();
     }
 
     public void UpdateData()
@@ -68,6 +63,6 @@ public abstract class ModifierBase : MonoBehaviour
 
     public bool TryProcModifier()
     {
-        return ProcChance > 100 - Random.Range(1, 101);
+        return ProcChance > 100 - UnityEngine.Random.Range(1, 101);
     }
 }

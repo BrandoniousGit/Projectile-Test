@@ -612,13 +612,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   modifiers: []
+  CalculatedDamage: 15
   WeaponData: {fileID: 11400000, guid: 6d7fcb6fd5756e44b89b4622291a9d72, type: 2}
-  BulletGO: {fileID: 5128087347927462573, guid: 2d71650453585ac43825358237d736cc, type: 3}
+  BulletGO: {fileID: 0}
   hitLayers:
     serializedVersion: 2
     m_Bits: 129
   bulletGravity: 0
-  CalculatedDamage: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0

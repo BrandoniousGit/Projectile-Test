@@ -4,8 +4,7 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - Data: {fileID: 11400000, guid: f2ace9b8a96077243ae02bd1133f64fa, type: 2}
-  - GunBrain: {instanceID: 0}
+  - Data: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

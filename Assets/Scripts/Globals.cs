@@ -37,6 +37,12 @@ public static class Globals
         Legendary
     }    
     
+    public enum EnhanceableItem
+    {
+        Gun,
+        Sword
+    }
+
     public enum ModifierApplyType
     {
         None,
@@ -50,15 +56,6 @@ public static class Globals
         Damage,
         BulletSpeed
     }    
-
-    public enum ModifierType
-    { 
-        ExtraBalls,
-        DamageUp,
-        GravityBalls,
-        TripleShot,
-        DoubleDamage
-    }
     #endregion
 
     #region public static methods
@@ -66,11 +63,9 @@ public static class Globals
     {
         hex = new string(hex.Where(character => character != '#').ToArray());
 
-        float r = (hex[0] + hex[1] * 16) / 255;
-        float g = (hex[2] + hex[3] * 16) / 255;
-        float b = (hex[4] + hex[5] * 16) / 255;
-
-        Debug.Log($"{r},{g},{b},{alpha}");
+        float r = (hex[1] + hex[0] * 16) / 255;
+        float g = (hex[3] + hex[2] * 16) / 255;
+        float b = (hex[5] + hex[4] * 16) / 255;
 
         return new Color(r, g, b, alpha);
     }

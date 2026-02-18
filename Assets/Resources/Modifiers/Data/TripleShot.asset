@@ -10,20 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d1aed6a33413d641a456ee08b836a50, type: 3}
-  m_Name: ExtraBalls_data
+  m_Name: TripleShot
   m_EditorClassIdentifier: 
-  EnhancementName: Extra Balls
-  InternalName: ExtraBalls
-  PrerequisiteEnhancement: 
-  Rarity: 1
-  EffectAmountPerLevel:
-  - 4
-  - 6
-  - 7
+  ApplicableToItems: 00000000
+  ModifierName: Triple Shot
+  InternalName: TripleShot
+  PrerequisiteModifier: 
+  Description: 
+  Rarity: 2
+  ApplyType: 0
+  ModifiesStat: 0
+  EffectAmountPerLevel: []
   CooldownPerLevel: []
   ProcChancePerLevel:
-  - 10
-  - 15
   - 20
+  - 40
+  - 60
+  - 80
+  - 100
+  ModifiesStats: 0
   HasActiveAbility: 0
-  MaxLevel: 3
+  MaxLevel: 5

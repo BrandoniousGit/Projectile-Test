@@ -5,6 +5,7 @@ using static Globals;
 [CreateAssetMenu(fileName = "New Modifier", menuName = "Scriptable Objects/New Modifier")]
 public class ModifierData : ScriptableObject
 {
+    public List<EnhanceableItem> ApplicableToItems;
     public string ModifierName;
     public string InternalName;
     public string PrerequisiteModifier;

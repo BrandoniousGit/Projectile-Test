@@ -1,9 +1,9 @@
 using UnityEngine;
 using static Globals;
 
-public class ExtraBalls : ModifierBase
+public class ExtraBalls : BulletBasedModifier
 {
-    protected override void OnBulletFiredAction()
+    protected override void OnActionPerformedEvent()
     {
         if (TryProcModifier())
         {
@@ -12,12 +12,12 @@ public class ExtraBalls : ModifierBase
                 Spread = 15,
                 CustomGravity = -10,
                 BulletSpeed = 30,
-                Damage = GunBrain.CalculatedDamage * 0.2f
+                Damage = AttachedEnhanceableBase.CalculatedDamage * 0.2f
             };
 
             for (int i = 0; i < EffectAmount; i++)
             {
-                GunBrain.ShootBullet(data);
+                ShootBullet(data);
             }
         }
     }
