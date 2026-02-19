@@ -6,6 +6,8 @@ public static class Globals
 {
     public class BulletData
     {
+        public float HomingStrength { get; set; }
+        public float HomingRange { get; set; }
         public float AngularOffsetX { get; set; }
         public float AngularOffsetY { get; set; }
         public float Spread { get; set; }
@@ -15,7 +17,6 @@ public static class Globals
         public bool IsHitscan { get; set; }
         public Vector3? Normal { get; set; }
         public Vector3? Position { get; set; }
-
     }
 
     public static Dictionary<Rarity, string> RarityLookup = new()

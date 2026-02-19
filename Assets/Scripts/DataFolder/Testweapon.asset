@@ -14,19 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_model: {fileID: 0}
   m_gunType: 2
+  m_fullAuto: 1
   m_gunName: Test
   m_gunDescription: 
   m_clipSize: 0
   m_reserveMax: 0
   m_chargeTime: 0
-  m_damage: 15
+  m_timeUntilFullSpeed: 0
+  m_baseDamage: 0
   m_reloadTime: 0
-  m_timeBetweenShot: 0
-  m_aimSpread: 0
+  m_timeBetweenShot: 0.5
+  m_aimSpread: 2
   m_damageFalloff: {x: 0, y: 0}
+  m_shotSpeedRampRange: {x: 0, y: 0}
   m_bulletTrail: {fileID: 8120191824853751959, guid: 20a6df4c546926547a27ffa604c8e8b0, type: 3}
   m_ImpactParticleSystem: {fileID: 0}
   m_shotSound: {fileID: 0}
-  m_pelletCount: 1
+  m_pelletCount: 8
   m_timeBetweenBurst: 0
   m_burstCount: 0

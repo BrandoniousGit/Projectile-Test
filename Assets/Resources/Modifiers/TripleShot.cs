@@ -3,7 +3,7 @@ using static Globals;
 
 public class TripleShot : BulletBasedModifier
 {
-    protected override void OnActionPerformedEvent()
+    protected override void OnBulletFiredAction(BulletData data)
     {
         if (TryProcModifier())
         {
@@ -12,7 +12,7 @@ public class TripleShot : BulletBasedModifier
                 AngularOffsetX = 10,
                 AngularOffsetY = 0,
                 BulletSpeed = 35,
-                Damage = AttachedEnhanceableBase.CalculatedDamage * 0.50f
+                Damage = data.Damage * 0.50f
             });
         
             ShootBullet(new BulletData()
@@ -20,7 +20,7 @@ public class TripleShot : BulletBasedModifier
                 AngularOffsetX = -10,
                 AngularOffsetY = 0,
                 BulletSpeed = 35,
-                Damage = AttachedEnhanceableBase.CalculatedDamage * 0.50f
+                Damage = data.Damage * 0.50f
             });
         }
     }

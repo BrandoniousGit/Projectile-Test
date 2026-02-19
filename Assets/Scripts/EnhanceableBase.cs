@@ -8,22 +8,15 @@ using UnityEngine;
 public class EnhanceableBase : MonoBehaviour
 {
     public List<ModifierBase> modifiers;
-    public static event Action OnActionPerformed;
     public static event Action OnModifiersChanged;
     public static event Action OnActiveAbilityButtonPressed;
-    public float CalculatedDamage;
 
     public void ClearNullModifiers()
     {
         modifiers.RemoveAll(modifier => modifier == null);
     }
 
-    public void CallMyActionPerformedEvent()
-    {
-        OnActionPerformed?.Invoke();
-    }
-
-    private void Update()
+    protected virtual void Update()
     {
         if (Input.GetKeyDown(KeyCode.Z))
         {

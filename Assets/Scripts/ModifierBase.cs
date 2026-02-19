@@ -18,24 +18,16 @@ public abstract class ModifierBase : MonoBehaviour
 
     #region virtual methods
     protected virtual void OnActionPerformedEvent() { return; }
-    protected virtual void OnEnableExtras() { return; }
-    protected virtual void OnDisableExtras() { return; }
     #endregion
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         EnhanceableBase.OnModifiersChanged += UpdateData;
-        EnhanceableBase.OnActionPerformed += OnActionPerformedEvent;
-
-        OnEnableExtras();
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
         EnhanceableBase.OnModifiersChanged -= UpdateData;
-        EnhanceableBase.OnActionPerformed -= OnActionPerformedEvent;
-
-        OnDisableExtras();
     }
 
     public void UpdateData()

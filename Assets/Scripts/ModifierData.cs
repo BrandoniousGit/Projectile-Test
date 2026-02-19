@@ -19,7 +19,6 @@ public class ModifierData : ScriptableObject
     public List<float> CooldownPerLevel;
     public List<float> ProcChancePerLevel;
 
-    public bool ModifiesStats;
     public bool HasActiveAbility;
     public int MaxLevel;
 }

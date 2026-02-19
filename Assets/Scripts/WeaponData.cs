@@ -10,14 +10,14 @@ public class WeaponData : ScriptableObject
 
 	public enum GunType
 	{
-		Burst,        //Burst Firing Weapons
-		FullAuto,     //Full Automatic
-		SemiAuto,     //Semi Automatic
+		Burst,        //Burst Firing
+		Single,       //Semi Automatic
 		Shotgun,      //Shotgun Type
 		BarrelSpin    //Mini-gun Type
 	}
 
 	public GunType m_gunType;
+	public bool m_fullAuto;
 	[Header("String")]
 	public string m_gunName;
 	public string m_gunDescription;
@@ -26,13 +26,16 @@ public class WeaponData : ScriptableObject
 	public int m_reserveMax;
 	[Header("Float")]
 	public float m_chargeTime;
-	public float m_damage;
+	public float m_timeUntilFullSpeed;
+	public float m_baseDamage;
 	public float m_reloadTime;
 	public float m_timeBetweenShot;
 	public float m_aimSpread;
 	[Header("Other")]
 	[Tooltip("X = Min Distance | Y = Max Distance")]
 	public Vector2 m_damageFalloff;
+    [Tooltip("X = Slowest Shot Speed | Y = Fastest Shot Speed")]
+    public Vector2 m_shotSpeedRampRange;
 	public TrailRenderer m_bulletTrail;
 	public ParticleSystem m_ImpactParticleSystem;
 	public AudioClip m_shotSound;

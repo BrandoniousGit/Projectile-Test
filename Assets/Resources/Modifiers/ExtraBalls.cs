@@ -3,16 +3,16 @@ using static Globals;
 
 public class ExtraBalls : BulletBasedModifier
 {
-    protected override void OnActionPerformedEvent()
+    protected override void OnBulletFiredAction(BulletData data)
     {
         if (TryProcModifier())
         {
-            var data = new BulletData()
+            var newData = new BulletData()
             {
                 Spread = 15,
                 CustomGravity = -10,
                 BulletSpeed = 30,
-                Damage = AttachedEnhanceableBase.CalculatedDamage * 0.2f
+                Damage = data.Damage * 0.2f
             };
 
             for (int i = 0; i < EffectAmount; i++)
