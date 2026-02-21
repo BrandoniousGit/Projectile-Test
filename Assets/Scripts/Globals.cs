@@ -6,14 +6,12 @@ public static class Globals
 {
     public class BulletData
     {
-        public float HomingStrength { get; set; }
-        public float HomingRange { get; set; }
         public float AngularOffsetX { get; set; }
         public float AngularOffsetY { get; set; }
         public float Spread { get; set; }
         public float BulletSpeed { get; set; }
         public float Damage { get; set; }
-        public float? CustomGravity { get; set; }
+        public float Gravity { get; set; }
         public bool IsHitscan { get; set; }
         public Vector3? Normal { get; set; }
         public Vector3? Position { get; set; }

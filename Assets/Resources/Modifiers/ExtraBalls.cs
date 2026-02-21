@@ -10,14 +10,14 @@ public class ExtraBalls : BulletBasedModifier
             var newData = new BulletData()
             {
                 Spread = 15,
-                CustomGravity = -10,
+                Gravity = -10,
                 BulletSpeed = 30,
                 Damage = data.Damage * 0.2f
             };
 
             for (int i = 0; i < EffectAmount; i++)
             {
-                ShootBullet(data);
+                ShootBullet(newData);
             }
         }
     }

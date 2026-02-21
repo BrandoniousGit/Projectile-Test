@@ -42,13 +42,9 @@ public class BulletBasedModifier : ModifierBase
         forward = Quaternion.AngleAxis(data.AngularOffsetY + unitCircle.y, transform.right) * forward;
 
         var pos = data.Position.HasValue ? data.Position.Value : transform.position;
-        var rot = data.Normal.HasValue ? Quaternion.Euler(data.Normal.Value) : transform.rotation;
 
-        var bulletObj = Instantiate(BulletGO, pos, rot, null);
-        var bulletRb = bulletObj.GetComponent<Rigidbody>();
+        var bulletObj = Instantiate(BulletGO, pos, Quaternion.LookRotation(forward), null);
         var bulletBase = bulletObj.GetComponent<BulletBase>();
         bulletBase.SetData(data);
-
-        bulletRb.linearVelocity = data.BulletSpeed * forward;
     }
 }

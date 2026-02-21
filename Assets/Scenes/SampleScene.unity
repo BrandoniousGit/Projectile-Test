@@ -238,7 +238,7 @@ GameObject:
   - component: {fileID: 64554850}
   - component: {fileID: 64554852}
   - component: {fileID: 64554851}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -612,6 +612,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   modifiers: []
+  canShoot: 0
   WeaponData: {fileID: 11400000, guid: 6d7fcb6fd5756e44b89b4622291a9d72, type: 2}
   hitLayers:
     serializedVersion: 2
@@ -935,7 +936,7 @@ GameObject:
   - component: {fileID: 1273655554}
   - component: {fileID: 1273655556}
   - component: {fileID: 1273655555}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1119,7 +1120,7 @@ GameObject:
   - component: {fileID: 1618013478}
   - component: {fileID: 1618013477}
   - component: {fileID: 1618013476}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}

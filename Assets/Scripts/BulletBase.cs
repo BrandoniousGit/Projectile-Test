@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static Globals;
@@ -11,7 +12,10 @@ public class BulletBase : MonoBehaviour
 
     private BulletData Data;
     private Rigidbody rb;
-    private float gravity = 0;
+    public float HomingStrength;
+    private float HomingRange;
+    private float gravity;
+    private GameObject closestEnemy;
 
     public static event Action<BulletBase> EvaluateShotModifiers;
 
@@ -26,11 +30,6 @@ public class BulletBase : MonoBehaviour
     #endregion
 
     #region public methods
-    public void ModifyGravity(float newGravity)
-    {
-        gravity = newGravity;
-    }    
-
     public void SetData(BulletData data)
     {
         Data = data;
@@ -38,24 +37,56 @@ public class BulletBase : MonoBehaviour
 
     public void ModifyHoming(float homingStrength, float homingRange)
     {
-        //DATA IS NULL HERE <-------------------------
-        Data.HomingStrength = homingStrength;
-        Data.HomingRange = homingRange;
+        HomingStrength = homingStrength;
+        HomingRange = homingRange;
     }
     #endregion
 
     #region private methods
     private void Update()
     {
-        rb.linearVelocity += new Vector3(0, gravity * Time.deltaTime, 0);
+        gravity += Data.Gravity * Time.deltaTime;
 
-        if (Data.HomingStrength > 0)
+        rb.linearVelocity = Data.BulletSpeed * transform.forward;
+        rb.linearVelocity += new Vector3(0, gravity, 0);
+
+        if (HomingStrength > 0)
         {
-            var colliders = Physics.OverlapSphere(transform.position, Data.HomingRange, collisionMask, QueryTriggerInteraction.Ignore);
+            var colliders = Physics.OverlapSphere(transform.position, HomingRange, collisionMask, QueryTriggerInteraction.Ignore);
 
-            foreach (var collider in colliders.Where(collider => collider.tag == "Enemy"))
+            if (colliders.Any())
             {
-                
+                FindClosest(colliders.Where(collider => collider.tag == "Enemy").ToArray());
+            }
+            else
+            {
+                closestEnemy = null;
+            }
+
+            if (closestEnemy != null)
+            {
+                var direction = closestEnemy.transform.position - transform.position;
+
+                if (Vector3.Angle(transform.forward, direction) < 60)
+                {
+                    transform.forward = Vector3.RotateTowards(transform.forward, direction, Mathf.PI * Time.deltaTime, 0); 
+                }
+            }
+        }
+    }
+
+    private void FindClosest(Collider[] colliders)
+    {
+        float currentClosestDistance = HomingRange; 
+
+        foreach (var collider in colliders)
+        {
+            var distanceToEnemy = (transform.position - collider.transform.position).magnitude;
+
+            if (distanceToEnemy < currentClosestDistance)
+            {
+                closestEnemy = collider.gameObject;
+                currentClosestDistance = distanceToEnemy;
             }
         }
     }
@@ -64,13 +95,14 @@ public class BulletBase : MonoBehaviour
     {
         if (Data != null)
         {
-            var normal = (transform.position - collision.transform.position).normalized;
+            var normal = (collision.transform.position - transform.position).normalized;
 
             if (collision.collider.tag == "Enemy")
             {
                 collision.collider.GetComponent<IDamageable>().RecieveDamage(Data.Damage);
-                Destroy(gameObject);
             }
+
+            Destroy(gameObject);
         }
     }
     #endregion

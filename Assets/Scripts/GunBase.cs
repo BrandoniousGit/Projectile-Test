@@ -88,7 +88,7 @@ public class GunBase : EnhanceableBase
         {
             Damage = CalculateWeaponDamage(),
             Spread = WeaponData.m_aimSpread,
-            BulletSpeed = 15,
+            BulletSpeed = WeaponData.m_bulletSpeed,
         };
     }
 
@@ -130,14 +130,10 @@ public class GunBase : EnhanceableBase
         if (!data.IsHitscan)
         {
             var pos = data.Position.HasValue ? data.Position.Value : transform.position;
-            var rot = data.Normal.HasValue ? Quaternion.Euler(data.Normal.Value) : transform.rotation;
 
-            var bulletObj = Instantiate(BulletGO, pos, rot, null);
-            var bulletRb = bulletObj.GetComponent<Rigidbody>();
+            var bulletObj = Instantiate(BulletGO, pos, Quaternion.LookRotation(forward), null);
             var bulletBase = bulletObj.GetComponent<BulletBase>();
             bulletBase.SetData(data);
-
-            bulletRb.linearVelocity = data.BulletSpeed * forward;
         }
 
         //Hitscan shots

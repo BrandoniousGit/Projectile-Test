@@ -28,6 +28,7 @@ public class WeaponData : ScriptableObject
 	public float m_chargeTime;
 	public float m_timeUntilFullSpeed;
 	public float m_baseDamage;
+	public float m_bulletSpeed;
 	public float m_reloadTime;
 	public float m_timeBetweenShot;
 	public float m_aimSpread;

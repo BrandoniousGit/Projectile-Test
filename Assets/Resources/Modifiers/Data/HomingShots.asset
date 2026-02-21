@@ -14,15 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ApplicableToItems: 
   ModifierName: 
-  InternalName: 
+  InternalName: HomingShots
   PrerequisiteModifier: 
   Description: 
-  Rarity: 0
+  Rarity: 4
   ApplyType: 0
   ModifiesStat: 0
-  EffectAmountPerLevel: []
+  EffectAmountPerLevel:
+  - 5
+  - 10
+  - 15
+  - 20
   CooldownPerLevel: []
-  ProcChancePerLevel: []
-  ModifiesStats: 0
+  ProcChancePerLevel:
+  - 100
+  - 20
+  - 30
+  - 50
   HasActiveAbility: 0
-  MaxLevel: 0
+  MaxLevel: 4
