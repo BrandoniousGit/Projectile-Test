@@ -53,11 +53,24 @@ public static class Globals
     {
         None,
         Damage,
-        BulletSpeed
-    }    
+        BulletSpeed,
+        ShotDelay
+    }
+    public enum GunType
+    {
+        Burst,        //Burst Firing
+        Single,       //Semi Automatic
+        Shotgun,      //Shotgun Type
+        BarrelSpin    //Mini-gun Type
+    }
     #endregion
 
     #region public static methods
+    public static string RemoveFileExtension(this string fileName)
+    {
+        return fileName.Remove(fileName.Length - 3);
+    }
+
     public static Color HexCodeToColour(string hex, float alpha)
     {
         hex = new string(hex.Where(character => character != '#').ToArray());

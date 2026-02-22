@@ -1,15 +1,24 @@
 using com.cyborgAssets.inspectorButtonPro;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
 public class EnhanceableBase : MonoBehaviour
 {
-    public List<ModifierBase> modifiers;
+    public List<ModifierBase> modifiers = new();
+    public List<string> modifierNames = new();
     public static event Action OnModifiersChanged;
     public static event Action OnActiveAbilityButtonPressed;
+
+    void Start()
+    {
+        DirectoryInfo dir = new DirectoryInfo("Assets/Resources/Modifiers");
+        FileInfo[] info = dir.GetFiles("*.cs");
+        modifierNames = info.Select(file => file.Name.RemoveFileExtension()).ToList();
+    }
 
     public void ClearNullModifiers()
     {
@@ -62,7 +71,6 @@ public class EnhanceableBase : MonoBehaviour
             {
                 var newModifier = (ModifierBase)gameObject.AddComponent(type);
                 newModifier.Data = (ModifierData)Resources.Load($"Modifiers/Data/{ModifierTypeString}");
-                newModifier.AttachedEnhanceableBase = this;
                 modifiers.Add(newModifier);
             }
         }

@@ -16,6 +16,9 @@ public class ModifierData : ScriptableObject
     public ModifiesStat ModifiesStat;
 
     public List<float> EffectAmountPerLevel;
+    public List<float> SecondaryEffectAmountPerLevel;    
+    public List<float> EffectCapPerLevel;
+    public List<float> SecondaryEffectCapPerLevel;
     public List<float> CooldownPerLevel;
     public List<float> ProcChancePerLevel;
 

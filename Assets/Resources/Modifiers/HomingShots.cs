@@ -4,7 +4,7 @@ public class HomingShots : BulletBasedModifier
     {
         if (TryProcModifier())
         {
-            bulletBase.ModifyHoming(EffectAmount, EffectAmount);
+            bulletBase.ModifyHoming(EffectAmount);
         }
     }
 }

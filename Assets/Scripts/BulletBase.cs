@@ -12,12 +12,13 @@ public class BulletBase : MonoBehaviour
 
     private BulletData Data;
     private Rigidbody rb;
-    public float HomingStrength;
-    private float HomingRange;
+    private float homingRange;
+    private int bounces;
     private float gravity;
     private GameObject closestEnemy;
 
     public static event Action<BulletBase> EvaluateShotModifiers;
+    public static event Action<bool> DidShotHitSomething;
 
     #region setup
     private void OnEnable()
@@ -33,12 +34,16 @@ public class BulletBase : MonoBehaviour
     public void SetData(BulletData data)
     {
         Data = data;
-    }    
+    }
 
-    public void ModifyHoming(float homingStrength, float homingRange)
+    public void ModifyHoming(float homingRange)
     {
-        HomingStrength = homingStrength;
-        HomingRange = homingRange;
+        this.homingRange = homingRange;
+    }    
+    
+    public void ModifyBounces(int bounces)
+    {
+        this.bounces += bounces;
     }
     #endregion
 
@@ -50,9 +55,9 @@ public class BulletBase : MonoBehaviour
         rb.linearVelocity = Data.BulletSpeed * transform.forward;
         rb.linearVelocity += new Vector3(0, gravity, 0);
 
-        if (HomingStrength > 0)
+        if (homingRange > 0)
         {
-            var colliders = Physics.OverlapSphere(transform.position, HomingRange, collisionMask, QueryTriggerInteraction.Ignore);
+            var colliders = Physics.OverlapSphere(transform.position, homingRange, collisionMask, QueryTriggerInteraction.Ignore);
 
             if (colliders.Any())
             {
@@ -77,7 +82,7 @@ public class BulletBase : MonoBehaviour
 
     private void FindClosest(Collider[] colliders)
     {
-        float currentClosestDistance = HomingRange; 
+        float currentClosestDistance = homingRange; 
 
         foreach (var collider in colliders)
         {
@@ -95,14 +100,26 @@ public class BulletBase : MonoBehaviour
     {
         if (Data != null)
         {
-            var normal = (collision.transform.position - transform.position).normalized;
-
             if (collision.collider.tag == "Enemy")
             {
                 collision.collider.GetComponent<IDamageable>().RecieveDamage(Data.Damage);
-            }
+                Destroy(gameObject);
 
-            Destroy(gameObject);
+                DidShotHitSomething?.Invoke(true);
+            }
+            else if (bounces > 0)
+            {
+                var hitNormal = collision.GetContact(0).normal.normalized;
+                var newForward = transform.forward - 2 * Vector3.Dot(transform.forward, hitNormal) * hitNormal;
+                transform.forward = newForward;
+
+                bounces--;
+            }
+            else
+            {
+                Destroy(gameObject);
+                DidShotHitSomething?.Invoke(false);
+            }
         }
     }
     #endregion

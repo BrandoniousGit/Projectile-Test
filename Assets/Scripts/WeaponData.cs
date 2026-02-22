@@ -1,20 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Globals;
 
 [CreateAssetMenu(fileName = "WeaponData", menuName = "Scriptable Objects/Create Weapon Data")]
 public class WeaponData : ScriptableObject
 {
 	public GameObject m_model;
 	//public GameObject m_projectile;
-
-	public enum GunType
-	{
-		Burst,        //Burst Firing
-		Single,       //Semi Automatic
-		Shotgun,      //Shotgun Type
-		BarrelSpin    //Mini-gun Type
-	}
 
 	public GunType m_gunType;
 	public bool m_fullAuto;
@@ -26,7 +19,7 @@ public class WeaponData : ScriptableObject
 	public int m_reserveMax;
 	[Header("Float")]
 	public float m_chargeTime;
-	public float m_timeUntilFullSpeed;
+	public float m_shotsUntilFullSpeed;
 	public float m_baseDamage;
 	public float m_bulletSpeed;
 	public float m_reloadTime;

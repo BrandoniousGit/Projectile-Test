@@ -7,6 +7,7 @@ public class BulletBasedModifier : ModifierBase
 
     protected virtual void OnBulletFiredAction(BulletData data) { return; }
     protected virtual void EvaluateShotModifiers(BulletBase data) { return; }
+    protected virtual void OnBulletExpire(bool hasHit) { return; }
 
     protected override void OnEnable()
     {
@@ -15,6 +16,7 @@ public class BulletBasedModifier : ModifierBase
         BulletGO = (GameObject)Resources.Load("Bullet");
 
         BulletBase.EvaluateShotModifiers += EvaluateShotModifiers;
+        BulletBase.DidShotHitSomething += OnBulletExpire;
         GunBase.OnBulletFiredEvent += OnBulletFiredAction;
     }
 
@@ -23,6 +25,7 @@ public class BulletBasedModifier : ModifierBase
         base.OnDisable();
 
         BulletBase.EvaluateShotModifiers -= EvaluateShotModifiers;
+        BulletBase.DidShotHitSomething -= OnBulletExpire;
         GunBase.OnBulletFiredEvent -= OnBulletFiredAction;
     }
 

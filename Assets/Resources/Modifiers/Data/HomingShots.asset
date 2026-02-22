@@ -25,9 +25,12 @@ MonoBehaviour:
   - 10
   - 15
   - 20
+  SecondaryEffectAmountPerLevel: []
+  EffectCapPerLevel: []
+  SecondaryEffectCapPerLevel: []
   CooldownPerLevel: []
   ProcChancePerLevel:
-  - 100
+  - 10
   - 20
   - 30
   - 50

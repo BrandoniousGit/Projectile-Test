@@ -1,17 +1,17 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using UnityEngine;
 using static Globals;
 
 public class GunBase : EnhanceableBase
 {
-    private BulletData BulletData;
     private GameObject BulletGO;
-
-    [SerializeField]
     private bool canShoot;
+    public float spinUp;
+
+    public float publicDamage;
 
     public WeaponData WeaponData;
     public LayerMask hitLayers;
@@ -22,14 +22,14 @@ public class GunBase : EnhanceableBase
     {
         base.Update();
 
-        if (canShoot && BulletData != null)
+        if (canShoot)
         {
             if (WeaponData.m_fullAuto)
             {
                 if (Input.GetMouseButton(0))
                 {
                     EvaluateShot();
-                }
+                }                
             }
             else
             {
@@ -38,7 +38,11 @@ public class GunBase : EnhanceableBase
                     EvaluateShot();
                 }
             }
-            
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            spinUp = WeaponData.m_shotSpeedRampRange.x;
         }
     }
 
@@ -46,18 +50,22 @@ public class GunBase : EnhanceableBase
     {
         switch (WeaponData.m_gunType)
         {
-            case WeaponData.GunType.Single:
-                ShootBullet(BulletData);
+            case GunType.Single:
+                ShootBullet();
                 StartCoroutine("ShotDelay");
                 break;
-            case WeaponData.GunType.Burst:
+            case GunType.Burst:
                 StartCoroutine("StartBurst");
                 break;
-            case WeaponData.GunType.Shotgun:
+            case GunType.Shotgun:
                 for (int i = 0; i < WeaponData.m_pelletCount; i++)
                 {
-                    ShootBullet(BulletData);
+                    ShootBullet();
                 }
+                StartCoroutine("ShotDelay");
+                break;            
+            case GunType.BarrelSpin:
+                ShootBullet();
                 StartCoroutine("ShotDelay");
                 break;
         }
@@ -75,49 +83,84 @@ public class GunBase : EnhanceableBase
         SetupWeapon();
     }
 
-    private void OnDisable()
-    {
-        canShoot = false;
-
-        OnModifiersChanged -= SetupWeapon;
-    }
-
     public void SetupWeapon()
     {
-        BulletData = new BulletData()
-        {
-            Damage = CalculateWeaponDamage(),
-            Spread = WeaponData.m_aimSpread,
-            BulletSpeed = WeaponData.m_bulletSpeed,
-        };
+        spinUp = WeaponData.m_shotSpeedRampRange.x;
     }
 
     public float CalculateWeaponDamage()
     {
         float calculatedDamage = WeaponData.m_baseDamage;
 
-        foreach (var modifier in modifiers.OrderBy(modifierBase => modifierBase.Data.ApplyType))
+        var filteredModifiers = modifiers
+            .Where(modifierBase => modifierBase.Data != null && modifierBase.Data.ModifiesStat == ModifiesStat.Damage)
+            .OrderBy(modifierBase => modifierBase.Data.ApplyType).ToList();
+
+        foreach (var modifier in filteredModifiers)
         {
-            switch (modifier.Data.ModifiesStat)
+            if (modifier.Data.ApplyType == ModifierApplyType.Additive)
             {
-                case ModifiesStat.Damage:
-                    if (modifier.Data.ApplyType == ModifierApplyType.Additive)
-                    {
-                        calculatedDamage += WeaponData.m_baseDamage * (modifier.Data.EffectAmountPerLevel[modifier.ModifierLevel - 1] / 100);
-                    }
-                    else
-                    {
-                        calculatedDamage *= modifier.Data.EffectAmountPerLevel[modifier.ModifierLevel - 1] / 100;
-                    }
-                    break;
+                calculatedDamage += WeaponData.m_baseDamage * (modifier.EffectAmount / 100);
+            }
+            else
+            {
+                calculatedDamage *= modifier.EffectAmount / 100;
             }
         }
 
         return calculatedDamage;
+    }    
+    
+    public float CalculateShotDelay()
+    {
+        float calculatedShotDelay = WeaponData.m_timeBetweenShot;
+
+        var filteredModifiers = modifiers
+            .Where(modifierBase => modifierBase.Data != null && modifierBase.Data.ModifiesStat == ModifiesStat.ShotDelay)
+            .OrderBy(modifierBase => modifierBase.Data.ApplyType).ToList();
+
+        foreach (var modifier in filteredModifiers)
+        {
+            if (modifier.Data.ApplyType == ModifierApplyType.Additive)
+            {
+                calculatedShotDelay -= WeaponData.m_timeBetweenShot * (modifier.EffectAmount / 100);
+            }
+            else
+            {
+                calculatedShotDelay /= modifier.EffectAmount / 100;
+            }
+        }
+
+        if (WeaponData.m_gunType == GunType.BarrelSpin)
+        {
+            if (spinUp < WeaponData.m_shotSpeedRampRange.y)
+            {
+                var increase = (WeaponData.m_shotSpeedRampRange.y - WeaponData.m_shotSpeedRampRange.x) / WeaponData.m_shotsUntilFullSpeed;
+                spinUp += increase;
+
+                if (spinUp > WeaponData.m_shotSpeedRampRange.y)
+                {
+                    spinUp = WeaponData.m_shotSpeedRampRange.y;
+                }
+            }
+
+            calculatedShotDelay /= spinUp;
+        }
+
+        return calculatedShotDelay;
     }
 
-    public void ShootBullet(BulletData data)
+    public void ShootBullet()
     {
+        var data = new BulletData()
+        {
+            Damage = CalculateWeaponDamage(),
+            Spread = WeaponData.m_aimSpread,
+            BulletSpeed = WeaponData.m_bulletSpeed,
+        };
+
+        publicDamage = data.Damage;
+
         //Setting up spread if using
         Vector3 forward = transform.forward;
         Vector2 unitCircle = UnityEngine.Random.insideUnitCircle;
@@ -149,7 +192,7 @@ public class GunBase : EnhanceableBase
             else //Bullet miss
             {
                 TrailRenderer trail = Instantiate(WeaponData.m_bulletTrail, /*weaponMuzzlePos*/ transform.position, Quaternion.identity);
-                StartCoroutine(SpawnTrail(trail, transform.position + (forward) * 50));
+                StartCoroutine(SpawnTrail(trail, transform.position + forward * 50));
             }
         }
 
@@ -166,24 +209,35 @@ public class GunBase : EnhanceableBase
         }
     }
 
+    private void OnDisable()
+    {
+        canShoot = false;
+
+        OnModifiersChanged -= SetupWeapon;
+    }
+
     #region coroutines
     IEnumerator StartBurst()
     {
+        var shotDelay = CalculateShotDelay();
+
         canShoot = false;
         for (int i = 0; i < WeaponData.m_burstCount; i++)
         {
-            ShootBullet(BulletData);
+            ShootBullet();
             yield return new WaitForSeconds(WeaponData.m_timeBetweenBurst);
         }
 
-        yield return new WaitForSeconds(WeaponData.m_timeBetweenShot);
+        yield return new WaitForSeconds(shotDelay);
         canShoot = true;
     }    
     
     IEnumerator ShotDelay()
     {
+        var shotDelay = CalculateShotDelay();
+
         canShoot = false;
-        yield return new WaitForSeconds(WeaponData.m_timeBetweenShot);
+        yield return new WaitForSeconds(shotDelay);
         canShoot = true;
     }
 
