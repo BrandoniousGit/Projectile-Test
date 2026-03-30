@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DoubleDamage : ModifierBase
+public class DoubleDamage : BasicBulletModifier
 {
 
 }

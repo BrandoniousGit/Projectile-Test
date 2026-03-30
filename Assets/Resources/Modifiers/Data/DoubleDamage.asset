@@ -9,21 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d1aed6a33413d641a456ee08b836a50, type: 3}
+  m_Script: {fileID: 0}
   m_Name: DoubleDamage
-  m_EditorClassIdentifier: 
-  ApplicableToItems: 0000000001000000
-  ModifierName: 
+  m_EditorClassIdentifier: Assembly-CSharp::BasicModifierData
+  ApplicableToItems: 
+  ModifierName: Double Damage
   InternalName: DoubleDamage
   PrerequisiteModifier: 
-  Description: 
-  Rarity: 4
-  ApplyType: 2
-  ModifiesStat: 1
-  EffectAmountPerLevel:
-  - 200
-  CooldownPerLevel: []
-  ProcChancePerLevel: []
-  ModifiesStats: 0
-  HasActiveAbility: 0
+  Description: Enter a description.
   MaxLevel: 1
+  ProcChance: 0
+  Rarity: 0
+  ModifiesStat: 1
+  ApplyType: 2
+  ValuePerLevel:
+  - 100

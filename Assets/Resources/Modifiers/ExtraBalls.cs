@@ -1,24 +1,28 @@
 using UnityEngine;
 using static Globals;
 
-public class ExtraBalls : BulletBasedModifier
+public class ExtraBalls : BasicBulletModifier
 {
-    protected override void OnBulletFiredAction(BulletData data)
+    protected override void OnBulletFired(WeaponStats data)
     {
-        if (TryProcModifier())
+        if (TryProcModifier(Data.ProcChance))
         {
             var newData = new BulletData()
             {
-                Spread = 15,
-                Gravity = -10,
+                Spread = 40,
                 BulletSpeed = 30,
-                Damage = data.Damage * 0.2f
+                Damage = data.Damage.Value * 0.3f
             };
 
-            for (int i = 0; i < EffectAmount; i++)
+            for (int i = 0; i < Data.ValuePerLevel[ModifierLevel - 1]; i++)
             {
                 ShootBullet(newData);
             }
         }
+    }
+
+    protected override void UpdateBulletBase(BulletBase bulletBase)
+    {
+        bulletBase.ModifyGravity(10);
     }
 }

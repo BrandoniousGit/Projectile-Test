@@ -1,10 +1,12 @@
-public class HomingShots : BulletBasedModifier
+using static Globals;
+
+public class HomingShots : BasicBulletModifier
 {
-    protected override void EvaluateShotModifiers(BulletBase bulletBase)
+    protected override void UpdateBulletBase(BulletBase bulletBase)
     {
-        if (TryProcModifier())
+        if (TryProcModifier(Data.ProcChance))
         {
-            bulletBase.ModifyHoming(EffectAmount);
+            bulletBase.ModifyHoming(Data.ValuePerLevel[ModifierLevel - 1]);
         }
     }
 }

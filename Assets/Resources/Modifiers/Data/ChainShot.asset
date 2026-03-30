@@ -9,28 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d1aed6a33413d641a456ee08b836a50, type: 3}
+  m_Script: {fileID: 0}
   m_Name: ChainShot
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChainShotData
   ApplicableToItems: 
-  ModifierName: 
+  ModifierName: Chain Shot
   InternalName: ChainShot
   PrerequisiteModifier: 
-  Description: 
-  Rarity: 3
-  ApplyType: 1
-  ModifiesStat: 1
+  Description: Enter a description.
+  MaxLevel: 2
+  ProcChance: 0
+  Rarity: 2
+  EffectAmountCap: 1.5
   EffectAmountPerLevel:
   - 1
-  - 1.5
   - 2
-  SecondaryEffectAmountPerLevel: []
-  EffectCapPerLevel:
-  - 50
-  - 75
-  - 100
-  SecondaryEffectCapPerLevel: []
-  CooldownPerLevel: []
-  ProcChancePerLevel: []
-  HasActiveAbility: 0
-  MaxLevel: 3

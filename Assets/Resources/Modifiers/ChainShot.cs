@@ -1,8 +1,15 @@
 using UnityEngine;
+using static Globals;
 
-public class ChainShot : BulletBasedModifier
+public class ChainShot : BulletBasedModifier<ChainShotData>
 {
     public int hitsInARow = 0;
+    public float EffectAmount;
+
+    protected override void OnBulletFired(WeaponStats data)
+    {
+        data.Damage.AddMod(EffectAmount, ModifierApplyType.Additive);
+    }
 
     protected override void OnBulletExpire(bool hasHit)
     {
@@ -16,11 +23,19 @@ public class ChainShot : BulletBasedModifier
             EffectAmount = 0;
         }
 
-        EffectAmount = Data.EffectAmountPerLevel[ModifierLevel - 1] * hitsInARow;
+        EffectAmount = 1 + (0.01f * Data.EffectAmountPerLevel[ModifierLevel - 1] * hitsInARow);
 
-        if (EffectAmount >= EffectAmountCap)
+        if (EffectAmount >= Data.EffectAmountCap)
         {
-            EffectAmount = EffectAmountCap;
+            EffectAmount = Data.EffectAmountCap;
         }
     }
+
+}
+
+[CreateAssetMenu(fileName = "New Modifier", menuName = "New Modifier/Chain Shot")]
+public class ChainShotData : ModifierData
+{
+    public float EffectAmountCap;
+    public float[] EffectAmountPerLevel;
 }

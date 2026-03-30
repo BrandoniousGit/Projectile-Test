@@ -1,20 +1,23 @@
 using UnityEngine;
 using static Globals;
 
-public class ShotgunBlast : BulletBasedModifier
+public class ShotgunBlast : BasicBulletModifier
 {
-    protected override void OnBulletFiredAction(BulletData data)
+    protected override void OnBulletFired(WeaponStats data)
     {
-        var newData = new BulletData()
+        if (TryProcModifier(Data.ProcChance))
         {
-            Spread = 15,
-            BulletSpeed = 30,
-            Damage = data.Damage * EffectAmount
-        };
+            var newData = new BulletData()
+            {
+                Spread = 40,
+                BulletSpeed = data.BulletSpeed.Value,
+                Damage = data.Damage.Value * 0.3f
+            };
 
-        for (int i = 0; i < 6; i++)
-        {
-            ShootBullet(data);
+            for (int i = 0; i < 6; i++)
+            {
+                ShootBullet(newData);
+            }
         }
     }
 }

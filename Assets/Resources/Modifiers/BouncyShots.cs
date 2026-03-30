@@ -1,10 +1,10 @@
 using UnityEngine;
 using static Globals;
 
-public class BouncyShots : BulletBasedModifier
+public class BouncyShots : BasicBulletModifier
 {
-    protected override void EvaluateShotModifiers(BulletBase bulletBase)
+    protected override void UpdateBulletBase(BulletBase bulletBase)
     {
-        bulletBase.ModifyBounces((int)EffectAmount);
+        bulletBase.ModifyBounces((int)Data.ValuePerLevel[ModifierLevel - 1]);
     }
 }

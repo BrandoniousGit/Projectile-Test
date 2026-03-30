@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DamageUp : ModifierBase
+public class DamageUp : BasicBulletModifier
 {
 
 }

@@ -9,25 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d1aed6a33413d641a456ee08b836a50, type: 3}
+  m_Script: {fileID: 0}
   m_Name: DamageUp
-  m_EditorClassIdentifier: 
-  ApplicableToItems: 0000000001000000
-  ModifierName: 
+  m_EditorClassIdentifier: Assembly-CSharp::BasicModifierData
+  ApplicableToItems: 
+  ModifierName: Damage Up
   InternalName: DamageUp
   PrerequisiteModifier: 
-  Description: 
+  Description: Enter a description.
+  MaxLevel: 4
+  ProcChance: 0
   Rarity: 0
-  ApplyType: 1
   ModifiesStat: 1
-  EffectAmountPerLevel:
-  - 10
-  - 20
-  - 30
-  - 40
+  ApplyType: 1
+  ValuePerLevel:
   - 50
-  CooldownPerLevel: []
-  ProcChancePerLevel: []
-  ModifiesStats: 0
-  HasActiveAbility: 0
-  MaxLevel: 5
+  - 75
+  - 100
+  - 200

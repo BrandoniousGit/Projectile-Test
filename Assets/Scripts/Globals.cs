@@ -1,20 +1,46 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public static class Globals
 {
     public class BulletData
     {
-        public float AngularOffsetX { get; set; }
-        public float AngularOffsetY { get; set; }
+        public float Damage { get; set; }
         public float Spread { get; set; }
         public float BulletSpeed { get; set; }
-        public float Damage { get; set; }
-        public float Gravity { get; set; }
-        public bool IsHitscan { get; set; }
-        public Vector3? Normal { get; set; }
+        public float AngularOffsetX { get; set; }
+        public float AngularOffsetY { get; set; }
         public Vector3? Position { get; set; }
+    }
+
+    public enum ModifiesStat
+    {
+        None,
+        Damage,
+        BulletCount,
+        BulletSpeed,
+        ShotDelay,
+        Spread,
+        CooldownDuration,
+        Bounces,
+        HomingRange
+    }
+
+    public class WeaponStats
+    {
+        public StackMod Damage;
+        public StackMod BulletCount;
+        public StackMod BulletSpeed;
+        public StackMod ShotDelay;
+        public StackMod Spread;
+        public StackMod CooldownDuration;
+        public StackMod Bounces;
+        public StackMod HomingRange;
+
+        public bool IsHitscan;
     }
 
     public static Dictionary<Rarity, string> RarityLookup = new()
@@ -49,18 +75,19 @@ public static class Globals
         Multiplicative
     }        
     
-    public enum ModifiesStat
+    public enum GearType
     {
-        None,
-        Damage,
-        BulletSpeed,
-        ShotDelay
+        Head = 1,
+        Chest = 2,
+        Legs = 3,
+        Feet = 4,
+        Accessory = 5
     }
+
     public enum GunType
     {
         Burst,        //Burst Firing
         Single,       //Semi Automatic
-        Shotgun,      //Shotgun Type
         BarrelSpin    //Mini-gun Type
     }
     #endregion

@@ -8,7 +8,6 @@ public class EnemyBase : MonoBehaviour, IDamageable
     public float Health;
 
     private float timer;
-    private bool hitRecently;
 
     public Image HealthBar;
     public Image WhiteBar;
@@ -35,7 +34,6 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
         if (timer <= 0)
         {
-            hitRecently = false;
             WhiteBar.fillAmount = Mathf.Lerp(WhiteBar.fillAmount, Health / MaxHealth, 0.1f);
         }
 
