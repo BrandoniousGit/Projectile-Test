@@ -4,9 +4,9 @@ public class HomingShots : BasicBulletModifier
 {
     protected override void UpdateBulletBase(BulletBase bulletBase)
     {
-        if (TryProcModifier(Data.ProcChance))
+        if (TryProcModifier(Data.ValuePerLevel[ModifierLevel - 1]))
         {
-            bulletBase.ModifyHoming(Data.ValuePerLevel[ModifierLevel - 1]);
+            bulletBase.ModifyHoming(10);
         }
     }
 }

@@ -31,8 +31,6 @@ public class LocalPlayerMove : MonoBehaviour
 
             Vector3 mag = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
 
-            Quaternion targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
-
             if (!grounded && !dashUsed && Input.GetKeyDown(KeyCode.LeftShift))
             {
                 rb.linearVelocity = new Vector3(moveDir.x * dashStrength, 0, moveDir.z * dashStrength);
@@ -48,7 +46,7 @@ public class LocalPlayerMove : MonoBehaviour
                     rb.linearVelocity = new Vector3(rb.linearVelocity.x * slowdownMulti, rb.linearVelocity.y, rb.linearVelocity.z * slowdownMulti);
                 }
             }
-
+            
             else
             {
                 rb.linearVelocity = new Vector3(moveDir.x * speed, rb.linearVelocity.y, moveDir.z * speed);
@@ -66,7 +64,7 @@ public class LocalPlayerMove : MonoBehaviour
         RaycastHit hit;
 
         //Checks for if the player is on the ground so they can jump etc.
-        if (Physics.SphereCast(transform.position, 0.4f, Vector3.down, out hit, groundCheckDistance, groundMask) && rb.linearVelocity.y <= 0)
+        if (Physics.SphereCast(transform.position, 0.41f, Vector3.down, out hit, groundCheckDistance, groundMask) && rb.linearVelocity.y <= 0)
         {
             grounded = true;
             dashUsed = false;
@@ -174,7 +172,7 @@ public class LocalPlayerMove : MonoBehaviour
         CheckGrounded();
     }
 
-    private void FreeMe()
+    public void FreeMe()
     {
         canMove = !canMove;
     }

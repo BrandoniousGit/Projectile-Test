@@ -9,18 +9,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: DoubleDamage
-  m_EditorClassIdentifier: Assembly-CSharp::BasicModifierData
+  m_Script: {fileID: 11500000, guid: 82a8c2b2b8966ad4da6d8168f98f273b, type: 3}
+  m_Name: RapidFire
+  m_EditorClassIdentifier: 
   ApplicableToItems: 
-  ModifierName: Double Damage
-  InternalName: DoubleDamage
+  ModifierName: Rapid Fire
+  InternalName: RapidFire
   PrerequisiteModifier: 
   Description: Enter a description.
-  MaxLevel: 1
+  MaxLevel: 10
   ProcChance: 0
-  Rarity: 0
-  ModifiesStat: 1
-  ApplyType: 2
+  Rarity: 1
+  ModifiesStat: 4
+  ApplyType: 1
   ValuePerLevel:
+  - 10
+  - 20
+  - 30
+  - 40
+  - 50
+  - 60
+  - 70
+  - 80
+  - 90
   - 100

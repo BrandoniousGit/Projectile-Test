@@ -13,13 +13,4 @@ public class BasicBulletModifier : BulletBasedModifier<BasicModifierData>
                 break;
         }
     }
-
-}
-
-[CreateAssetMenu(fileName = "New Modifier", menuName = "New Modifier/Basic Modifier")]
-public class BasicModifierData : ModifierData
-{
-    public ModifiesStat ModifiesStat;
-    public ModifierApplyType ApplyType;
-    public List<float> ValuePerLevel;
 }

@@ -22,7 +22,7 @@ public static class Globals
         Damage,
         BulletCount,
         BulletSpeed,
-        ShotDelay,
+        FireRate,
         Spread,
         CooldownDuration,
         Bounces,
@@ -34,7 +34,7 @@ public static class Globals
         public StackMod Damage;
         public StackMod BulletCount;
         public StackMod BulletSpeed;
-        public StackMod ShotDelay;
+        public StackMod FireRate;
         public StackMod Spread;
         public StackMod CooldownDuration;
         public StackMod Bounces;
@@ -93,9 +93,9 @@ public static class Globals
     #endregion
 
     #region public static methods
-    public static string RemoveFileExtension(this string fileName)
+    public static string RemoveFileExtension(this string fileName, int extensionLength)
     {
-        return fileName.Remove(fileName.Length - 3);
+        return fileName.Remove(fileName.Length - extensionLength);
     }
 
     public static Color HexCodeToColour(string hex, float alpha)

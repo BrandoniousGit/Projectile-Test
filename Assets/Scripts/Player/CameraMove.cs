@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using TMPro;
+using Unity.Cinemachine;
 using UnityEngine;
 using static Globals;
 
@@ -7,13 +8,15 @@ public class CameraMove : MonoBehaviour
 {
     public float xSens;
     public float ySens;
-    public GameObject playerModel;
+    public float zoomSpeed;
     public LayerMask interactMask;
     public float interactDistance;
     public TextMeshProUGUI interactionText;
 
     private float x, y;
     private bool isLocked;
+    private float zoom = 30;
+    private float zoomMin = 20, zoomMax = 70;
 
     private void Start()
     {
@@ -25,6 +28,7 @@ public class CameraMove : MonoBehaviour
         if (isLocked)
         {
             UserInput();
+            Zoom();
         }
 
         if (Input.GetKeyDown(KeyCode.X))
@@ -44,9 +48,7 @@ public class CameraMove : MonoBehaviour
 
         var interactionTextString = string.Empty;
 
-        Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 0.4f, transform.position.z), transform.forward, Color.red, Time.deltaTime);
-
-        if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.4f, transform.position.z), transform.forward, out var hit, interactDistance, interactMask))
+        if (Physics.Raycast(new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + 0.4f, Camera.main.transform.position.z), Camera.main.transform.forward, out var hit, interactDistance, interactMask))
         {
             //Checks to see if it is an interactable
             if (hit.transform.TryGetComponent<Interactable>(out var component))
@@ -83,18 +85,45 @@ public class CameraMove : MonoBehaviour
         }
     }
 
+    private void Zoom()
+    {
+        if (Input.mouseScrollDelta.y > 0) zoom -= zoomSpeed;
+        if (Input.mouseScrollDelta.y < 0) zoom += zoomSpeed;
+
+        zoom = Mathf.Clamp(zoom, zoomMin, zoomMax);
+
+        if (Input.GetMouseButton(1))
+        {
+            //Time.timeScale = 0.5f;
+            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, zoom, 0.1f);
+        }
+        else if (!Mathf.Approximately(Camera.main.fieldOfView, 70))
+        {
+            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 70, 0.1f);
+        }
+        else
+            Camera.main.fieldOfView = 70;
+
+        if (Input.GetMouseButtonUp(1))
+        {
+            //Time.timeScale = 1f;
+            zoom = 30;
+        }
+    }
+
     private void UserInput()
     {
         x += Input.GetAxis("Mouse X") * xSens;
         y -= Input.GetAxis("Mouse Y") * ySens;
 
-        y = Mathf.Clamp(y, -75.0f, 75.0f);
+        y = Mathf.Clamp(y, -80.0f, 80.0f);
 
-        playerModel.transform.localRotation = Quaternion.Euler(0, x, 0);
-        transform.localRotation = Quaternion.Euler(y, x, 0);
+        transform.rotation = Quaternion.Euler(0, x, 0);
+
+        Camera.main.transform.localRotation = Quaternion.Euler(y, 0, 0);
     }
 
-    private void FreeMe()
+    public void FreeMe()
     {
         isLocked = !isLocked;
 

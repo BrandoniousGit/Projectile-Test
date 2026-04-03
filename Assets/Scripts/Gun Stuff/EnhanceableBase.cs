@@ -13,18 +13,21 @@ public class EnhanceableBase : MonoBehaviour
     public static event Action OnActiveAbilityButtonPressed;
     public static event Action OnModifiersChanged;
 
-    void Start()
-    {
-        DirectoryInfo dir = new DirectoryInfo("Assets/Resources/Modifiers");
-        FileInfo[] info = dir.GetFiles("*.cs");
-        modifierNames = info.Select(file => file.Name.RemoveFileExtension()).ToList();
-    }
-
     public void ClearNullModifiers()
     {
         modifiers.RemoveAll(modifier => modifier == null);
     }
     
+    protected virtual void OnEnable()
+    {
+        ModifierUIItem.UpdateModifierEvent += UpdateModifier;
+    }    
+    
+    protected virtual void OnDisable()
+    {
+        ModifierUIItem.UpdateModifierEvent -= UpdateModifier;
+    }
+
     protected virtual void Update()
     {
         if (Input.GetKeyDown(KeyCode.Z))

@@ -25,14 +25,14 @@ public class WeaponData : ScriptableObject
 	public float m_bulletSpeed;
 	public float m_bulletSize = 1;
 	public float m_reloadTime;
-	public float m_timeBetweenShot;
+	public float m_fireRate;
 	public float m_aimSpread;
 	[Header("Other")]
 	[Tooltip("X = Min Distance | Y = Max Distance")]
 	public Vector2 m_damageFalloff;
     [Tooltip("X = Slowest Shot Speed | Y = Fastest Shot Speed")]
     public Vector2 m_shotSpeedRampRange;
-	public TrailRenderer m_bulletTrail;
+	public LineRenderer m_bulletTrail;
 	public ParticleSystem m_ImpactParticleSystem;
 	public AudioClip m_shotSound;
 

@@ -112,10 +112,14 @@ public class BulletBase : MonoBehaviour
         {
             if (collision.gameObject.tag == "Enemy")
             {
-                collision.gameObject.GetComponent<IDamageable>().RecieveDamage(Data.Damage);
-                Destroy(gameObject);
+                if (collision.gameObject.TryGetComponent<IDamageable>(out var damageable))
+                {
+                    damageable.RecieveDamage(Data.Damage);
 
-                DidShotHitSomething?.Invoke(true);
+                    Destroy(gameObject);
+
+                    DidShotHitSomething?.Invoke(true);
+                }
             }
             else if (bounces > 0)
             {

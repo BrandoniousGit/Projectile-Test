@@ -8,6 +8,7 @@ public class EnemyBase : MonoBehaviour, IDamageable
     public float Health;
 
     private float timer;
+    private GameObject EnemyBullet;
 
     public Image HealthBar;
     public Image WhiteBar;
@@ -18,12 +19,13 @@ public class EnemyBase : MonoBehaviour, IDamageable
         timer = 0.4f;
     }
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         Health = MaxHealth;
+        EnemyBullet = (GameObject)Resources.Load("EnemyBullet");
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         HealthBar.fillAmount = Health / MaxHealth;
 
@@ -35,9 +37,12 @@ public class EnemyBase : MonoBehaviour, IDamageable
         if (timer <= 0)
         {
             WhiteBar.fillAmount = Mathf.Lerp(WhiteBar.fillAmount, Health / MaxHealth, 0.1f);
+            Health += 50 * Time.deltaTime;
         }
 
-        if (Health < 0)
+        Health = Mathf.Clamp(Health, 0, MaxHealth);
+
+        if (Health <= 0)
         {
             Destroy(gameObject);
         }
