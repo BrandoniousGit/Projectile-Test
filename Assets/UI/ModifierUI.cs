@@ -27,7 +27,7 @@ public class ModifierUI : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.BackQuote))
         {
             ModifierCanvas.SetActive(!ModifierCanvas.activeSelf);
             PlayerManager.Instance.SetPlayerFrozen();

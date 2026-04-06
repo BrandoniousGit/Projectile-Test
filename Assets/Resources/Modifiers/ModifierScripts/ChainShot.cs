@@ -6,7 +6,7 @@ public class ChainShot : BulletBasedModifier<ChainShotData>
     public int hitsInARow = 0;
     public float EffectAmount;
 
-    protected override void OnBulletFired(WeaponStats data)
+    protected override void OnEvaluateModifiers(WeaponStats data)
     {
         data.Damage.AddMod(EffectAmount, ModifierApplyType.Additive);
     }
@@ -30,5 +30,4 @@ public class ChainShot : BulletBasedModifier<ChainShotData>
             EffectAmount = Data.EffectAmountCap;
         }
     }
-
 }

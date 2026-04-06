@@ -6,7 +6,7 @@ public class HomingShots : BasicBulletModifier
     {
         if (TryProcModifier(Data.ValuePerLevel[ModifierLevel - 1]))
         {
-            bulletBase.ModifyHoming(10);
+            bulletBase.ModifyHoming(30);
         }
     }
 }

@@ -23,7 +23,7 @@ MonoBehaviour:
   ModifiesStat: 0
   ApplyType: 0
   ValuePerLevel:
-  - 25
+  - 100
   - 50
   - 75
   - 100

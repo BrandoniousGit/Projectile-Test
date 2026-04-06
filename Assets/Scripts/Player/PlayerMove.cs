@@ -1,14 +1,17 @@
+using System;
+using TMPro;
 using UnityEngine;
 
 public class LocalPlayerMove : MonoBehaviour
 {
     [SerializeField] private Camera cam;
     [SerializeField] private Rigidbody rb;
-    [SerializeField] private float moveSpeed, sprintMoveSpeed, crouchMoveSpeed, jumpForce, airMulti, dashStrength, playerGravity, groundCheckDistance;
+    [SerializeField] private float moveSpeed, groundAccel, airSpeed, airAccel, jumpForce, dashStrength, playerGravity, groundCheckDistance, sprintMoveSpeed, crouchMoveSpeed;
     [SerializeField] private bool grounded, crouching, sprinting, dashUsed, doubleJumpUsed;
     private bool canMove = true;
 
     private float slowdownMulti, speed, groundedLerp;
+    public TextMeshProUGUI spedometer;
 
     public LayerMask groundMask;
 
@@ -39,21 +42,34 @@ public class LocalPlayerMove : MonoBehaviour
 
             if (!grounded)
             {
-                rb.AddForce(new Vector3(moveDir.x * speed * airMulti * Time.deltaTime, 0, moveDir.z * speed * airMulti * Time.deltaTime));
-
-                if (mag.magnitude > speed)
+                if (mag.magnitude < airSpeed)
                 {
-                    rb.linearVelocity = new Vector3(rb.linearVelocity.x * slowdownMulti, rb.linearVelocity.y, rb.linearVelocity.z * slowdownMulti);
+                    rb.AddForce(new Vector3(moveDir.x * airAccel * Time.deltaTime, 0, moveDir.z * airAccel * Time.deltaTime));
+                }
+                else
+                {
+                    if (zMove == 1)
+                    {
+                        var num1 = Mathf.Clamp((rb.linearVelocity.magnitude - airSpeed) / (100 - airSpeed), 0, 1);
+                        var changeRate = Mathf.Lerp(Mathf.PI / 2, Mathf.PI / 12, num1) * Time.deltaTime;
+
+                        var num2 = Mathf.Clamp((Vector3.Angle(rb.linearVelocity, moveDir) - 15) / 75, 0, 1);
+                        var newVel = Vector3.RotateTowards(rb.linearVelocity, moveDir, changeRate, Mathf.Lerp(0, airSpeed, num2) * Time.deltaTime);
+                        rb.linearVelocity = new Vector3(newVel.x, rb.linearVelocity.y, newVel.z);
+                    }
+                    else
+                    {
+                        rb.linearVelocity = rb.linearVelocity + (moveDir * airSpeed - rb.linearVelocity).normalized * airAccel * Time.deltaTime;
+                    }
                 }
             }
             
             else
             {
-                rb.linearVelocity = new Vector3(moveDir.x * speed, rb.linearVelocity.y, moveDir.z * speed);
+                rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, new Vector3(moveDir.x * speed, rb.linearVelocity.y, moveDir.z * speed), groundAccel);
             }
         }
-
-        else
+        else if (grounded)
         {
             rb.linearVelocity = new Vector3(rb.linearVelocity.x * slowdownMulti, rb.linearVelocity.y, rb.linearVelocity.z * slowdownMulti);
         }
@@ -145,9 +161,16 @@ public class LocalPlayerMove : MonoBehaviour
 
     void Update()
     {
+        spedometer.SetText($"{Math.Round(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude, 2)}"); 
+
         if (Input.GetKeyDown(KeyCode.X))
         {
             FreeMe();
+        }        
+        
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            rb.AddExplosionForce(5000, new Vector3(0, 2, 0), 10);
         }
 
         if (cam == null || rb == null) return;

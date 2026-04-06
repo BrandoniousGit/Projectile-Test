@@ -12,11 +12,6 @@ public class EnhanceableBase : MonoBehaviour
     public List<string> modifierNames = new();
     public static event Action OnActiveAbilityButtonPressed;
     public static event Action OnModifiersChanged;
-
-    public void ClearNullModifiers()
-    {
-        modifiers.RemoveAll(modifier => modifier == null);
-    }
     
     protected virtual void OnEnable()
     {
@@ -55,6 +50,7 @@ public class EnhanceableBase : MonoBehaviour
                     if (existingModifier.ModifierLevel < existingModifier.GetData().MaxLevel)
                     {
                         existingModifier.ModifierLevel++;
+                        existingModifier.UpdateDisplayName();
                     }
                 }
                 else
@@ -62,6 +58,7 @@ public class EnhanceableBase : MonoBehaviour
                     if (existingModifier.ModifierLevel > 1)
                     {
                         existingModifier.ModifierLevel--;
+                        existingModifier.UpdateDisplayName();
                     }
                     else
                     {

@@ -9,11 +9,13 @@ public class GunBase : EnhanceableBase
     public GameObject BulletGO;
     private bool canShoot;
     private float spinUp;
+    private int hitscanBouncesUsed;
 
     public WeaponData BaseWeaponData;
     public LayerMask hitLayers;
     public Transform CameraTransform => Camera.main.transform;
 
+    public static event Action<bool> DidShotHitSomething;
     public static event Action<WeaponStats> OnBulletFired;
     public static event Action<WeaponStats> OnEvaluateModifiers;
 
@@ -21,22 +23,20 @@ public class GunBase : EnhanceableBase
 
     public float Damage;
 
+    #region protected methods
     protected override void OnEnable()
     {
         base.OnEnable();
 
-        OnModifiersChanged += SetupWeapon;
-        BulletGO = (GameObject)Resources.Load("Bullet");
-
-        ClearNullModifiers();
-        SetupWeapon();
+        if (BulletGO == null) BulletGO = (GameObject)Resources.Load("Bullet");
+        spinUp = BaseWeaponData.m_shotSpeedRampRange.x;
+        canShoot = true;
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
 
-        OnModifiersChanged -= SetupWeapon;
         canShoot = false;
     }
 
@@ -50,14 +50,14 @@ public class GunBase : EnhanceableBase
             {
                 if (Input.GetMouseButton(0))
                 {
-                    EvaluateShot();
+                    TryShoot();
                 }                
             }
             else
             {
                 if (Input.GetMouseButtonDown(0))
                 {
-                    EvaluateShot();
+                    TryShoot();
                 }
             }
         }
@@ -67,10 +67,26 @@ public class GunBase : EnhanceableBase
             spinUp = BaseWeaponData.m_shotSpeedRampRange.x;
         }
     }
+    #endregion
 
-    private void EvaluateShot()
+    #region private methods
+    public void TryShoot(bool doShotDelay = true)
     {
-        BeforeShot();
+        #region modifier setup
+        WeaponStats.Damage = new StackMod(BaseWeaponData.m_baseDamage);
+        WeaponStats.FireRate = new StackMod(BaseWeaponData.m_fireRate);
+        WeaponStats.Spread = new StackMod(BaseWeaponData.m_aimSpread);
+        WeaponStats.BulletSpeed = new StackMod(BaseWeaponData.m_bulletSpeed);
+        WeaponStats.BulletCount = new StackMod(BaseWeaponData.m_pelletCount);
+        WeaponStats.Gravity = new StackMod(1, float.MinValue);
+        WeaponStats.Bounces = new StackMod(1);
+
+        OnEvaluateModifiers?.Invoke(WeaponStats);
+        #endregion
+
+        Damage = WeaponStats.Damage.Value;
+
+        Vector3 forward = (CameraTransform.position + CameraTransform.forward * 100 - transform.position).normalized;
 
         if (BaseWeaponData.m_gunType == GunType.BarrelSpin)
         {
@@ -82,42 +98,27 @@ public class GunBase : EnhanceableBase
             switch (BaseWeaponData.m_gunType)
             {
                 case GunType.Single:
-                    ShootBullet();
-                    StartCoroutine("WaitShotDelay");
+                case GunType.BarrelSpin:
+
+                    ShootBullet(forward);
+
+                    if (doShotDelay)
+                    {
+                        StartCoroutine("WaitShotDelay");
+                    }
+
                     break;
                 case GunType.Burst:
-                    StartCoroutine("StartBurst");
-                    break;
-                case GunType.BarrelSpin:
-                    ShootBullet();
-                    StartCoroutine("WaitShotDelay");
+                    StartCoroutine("StartBurst", forward);
                     break;
             }
         }
-    }
 
-    public void BeforeShot()
-    {
-        WeaponStats.Damage = new StackMod(BaseWeaponData.m_baseDamage);
-        WeaponStats.FireRate = new StackMod(BaseWeaponData.m_fireRate);
-        WeaponStats.Spread = new StackMod(BaseWeaponData.m_aimSpread);
-        WeaponStats.BulletSpeed = new StackMod(BaseWeaponData.m_bulletSpeed);
-        WeaponStats.BulletCount = new StackMod(BaseWeaponData.m_pelletCount);
-
-        OnEvaluateModifiers?.Invoke(WeaponStats);
-
+        OnBulletFired?.Invoke(WeaponStats);
         Damage = WeaponStats.Damage.Value;
     }
 
-    public void SetupWeapon()
-    {
-        BeforeShot();
-
-        spinUp = BaseWeaponData.m_shotSpeedRampRange.x;
-        canShoot = true;
-    }
-    
-    public void CalculateSpinUpShotDelay()
+    private void CalculateSpinUpShotDelay()
     {
         if (spinUp < BaseWeaponData.m_shotSpeedRampRange.y)
         {
@@ -133,36 +134,38 @@ public class GunBase : EnhanceableBase
         WeaponStats.FireRate.AddMod(spinUp, ModifierApplyType.Multiplicative);
     }
 
-    public void ShootBullet()
+    private void ShootBullet(Vector3 forwardVector, Vector3? origin = null)
     {
         var data = new BulletData()
         {
             Damage = WeaponStats.Damage.Value,
             Spread = WeaponStats.Spread.Value,
-            BulletSpeed = WeaponStats.BulletSpeed.Value
+            BulletSpeed = WeaponStats.BulletSpeed.Value,
+            UseGravity = WeaponStats.UsesGravity,
+            Gravity = WeaponStats.Gravity.Value,
+            Bounces = WeaponStats.Bounces.Value
         };
 
         //Projectile shots
         if (!BaseWeaponData.m_isHitscan)
         {
-            Vector3 forward = (CameraTransform.position + CameraTransform.forward * 100 - transform.position).normalized;
             bool somethingOnCrosshair = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, Mathf.Infinity, hitLayers, QueryTriggerInteraction.Ignore);
 
             if (somethingOnCrosshair)
             {
-                forward = (hit.point - transform.position).normalized;
+                forwardVector = (hit.point - transform.position).normalized;
             }
 
             //Setting up spread if using
             Vector2 unitCircle = UnityEngine.Random.insideUnitCircle;
             unitCircle *= data.Spread;
 
-            forward = Quaternion.AngleAxis(data.AngularOffsetX + unitCircle.x, transform.up) * forward;
-            forward = Quaternion.AngleAxis(data.AngularOffsetY + unitCircle.y, transform.right) * forward;
+            forwardVector = Quaternion.AngleAxis(data.AngularOffsetX + unitCircle.x, transform.up) * forwardVector;
+            forwardVector = Quaternion.AngleAxis(data.AngularOffsetY + unitCircle.y, transform.right) * forwardVector;
 
             var pos = data.Position.HasValue ? data.Position.Value : transform.position;
 
-            var bulletObj = Instantiate(BulletGO, pos, Quaternion.LookRotation(forward), null);
+            var bulletObj = Instantiate(BulletGO, pos, Quaternion.LookRotation(forwardVector), null);
             bulletObj.transform.localScale *= BaseWeaponData.m_bulletSize;
             var bulletBase = bulletObj.GetComponent<BulletBase>();
             bulletBase.SetData(data);
@@ -171,57 +174,64 @@ public class GunBase : EnhanceableBase
         //Hitscan shots
         else
         {
-            Vector3 forward = (CameraTransform.position + CameraTransform.forward * 100 - transform.position).normalized;
-
             Vector2 unitCircle = UnityEngine.Random.insideUnitCircle;
-            unitCircle *= data.Spread;
+            unitCircle *= origin != null ? 0 : data.Spread;
 
-            forward = Quaternion.AngleAxis(data.AngularOffsetX + unitCircle.x, transform.up) * forward;
-            forward = Quaternion.AngleAxis(data.AngularOffsetY + unitCircle.y, transform.right) * forward;
+            forwardVector = Quaternion.AngleAxis(data.AngularOffsetX + unitCircle.x, transform.up) * forwardVector;
+            forwardVector = Quaternion.AngleAxis(data.AngularOffsetY + unitCircle.y, transform.right) * forwardVector;
 
-            Debug.DrawRay(forward, CameraTransform.forward, Color.green, Time.deltaTime);
+            bool hitCheck = Physics.Raycast(origin != null ? origin.Value : Camera.main.transform.position, forwardVector, out RaycastHit hit, Mathf.Infinity, hitLayers, QueryTriggerInteraction.Ignore);
 
-            bool firstCheck = Physics.Raycast(Camera.main.transform.position, forward, out RaycastHit hit, Mathf.Infinity, hitLayers, QueryTriggerInteraction.Ignore);
-
-            if (firstCheck)
+            if (hitCheck)
             {
-                WhatDidIHit(hit, data);
+                WhatDidIHit(hit, data, forwardVector);
 
-                LineRenderer trail = Instantiate(BaseWeaponData.m_bulletTrail, /*weaponMuzzlePos*/ transform.position, Quaternion.identity);
+                LineRenderer trail = Instantiate(BaseWeaponData.m_bulletTrail, /*weaponMuzzlePos*/ origin != null ? origin.Value : transform.position, Quaternion.identity);
                 Vector3[] positions = new Vector3[] { trail.transform.position, hit.point };
                 trail.SetPositions(positions);
             }
             else //Bullet miss
             {
-                Physics.Raycast(transform.position, transform.forward, out RaycastHit secondHit, Mathf.Infinity, hitLayers, QueryTriggerInteraction.Ignore);
-
-                LineRenderer trail = Instantiate(BaseWeaponData.m_bulletTrail, /*weaponMuzzlePos*/ transform.position, Quaternion.identity);
-                Vector3[] positions = new Vector3[] { trail.transform.position, CameraTransform.position + forward * (secondHit.distance != 0 ? secondHit.distance : 100)};
+                LineRenderer trail = Instantiate(BaseWeaponData.m_bulletTrail, /*weaponMuzzlePos*/ origin != null ? origin.Value : transform.position, Quaternion.identity);
+                Vector3[] positions = new Vector3[] { trail.transform.position, CameraTransform.position + forwardVector * 100};
                 trail.SetPositions(positions);
+
+                DidShotHitSomething?.Invoke(false);
             }
         }
-
-        OnBulletFired?.Invoke(WeaponStats);
-        Damage = WeaponStats.Damage.Value;
     }
 
-    public void WhatDidIHit(RaycastHit _hit, BulletData data)
+    private void WhatDidIHit(RaycastHit _hit, BulletData data, Vector3 forward = new Vector3())
     {
         //Instantiate(weaponData.m_ImpactParticleSystem, _hit.point, Quaternion.LookRotation(_hit.normal));
 
         if (_hit.transform.gameObject.GetComponent<IDamageable>() != null)
         {
             _hit.transform.gameObject.GetComponent<IDamageable>().RecieveDamage(data.Damage);
+            DidShotHitSomething?.Invoke(true);
+        }
+        else if (_hit.transform.gameObject != null && BaseWeaponData.m_isHitscan && hitscanBouncesUsed < WeaponStats.Bounces.Value - 1)
+        {
+            hitscanBouncesUsed += 1;
+            var newForward = forward - 2 * Vector3.Dot(transform.forward, _hit.normal) * _hit.normal;
+
+            ShootBullet(newForward, _hit.point);
+        }
+        else
+        {
+            hitscanBouncesUsed = 0;
+            DidShotHitSomething?.Invoke(false);
         }
     }
+    #endregion
 
     #region coroutines
-    IEnumerator StartBurst()
+    IEnumerator StartBurst(Vector3 forward)
     {
         canShoot = false;
         for (int i = 0; i < BaseWeaponData.m_burstCount; i++)
         {
-            ShootBullet();
+            ShootBullet(forward);
             yield return new WaitForSeconds(BaseWeaponData.m_timeBetweenBurst);
         }
 
@@ -235,25 +245,5 @@ public class GunBase : EnhanceableBase
         yield return new WaitForSeconds(1 / WeaponStats.FireRate.Value);
         canShoot = true;
     }
-
-    //IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hit)
-    //{
-    //    Vector3 startVec = _trail.transform.position;
-    //    float remainingTime = Vector3.Distance(_trail.transform.position, _hit);
-    //    float endTime = remainingTime;
-
-    //    //Sets speed of trail to be the same for any distance
-    //    while (remainingTime > 0)
-    //    {
-    //        _trail.transform.position = Vector3.Lerp(startVec, _hit, 1 - (remainingTime / endTime));
-    //        remainingTime -= Time.deltaTime * 200;
-
-    //        yield return null;
-    //    }
-
-    //    _trail.transform.position = _hit;
-
-    //    Destroy(_trail.gameObject, _trail.time);
-    //}
     #endregion
 }

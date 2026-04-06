@@ -4,6 +4,7 @@ using static Globals;
 public class BulletBasedModifier<T> : ModifierBase<T> where T : ModifierData
 {
     private GameObject BulletGO;
+    public GunBase BaseWeapon;
 
     protected virtual void OnBulletFired(WeaponStats data) { return; }
     protected virtual void OnEvaluateModifiers(WeaponStats data) { return; }
@@ -14,10 +15,12 @@ public class BulletBasedModifier<T> : ModifierBase<T> where T : ModifierData
     {
         base.OnEnable();
 
+        BaseWeapon = gameObject.GetComponent<GunBase>();
         BulletGO = (GameObject)Resources.Load("Bullet");
 
         BulletBase.UpdateBulletBase += UpdateBulletBase;
         BulletBase.DidShotHitSomething += OnBulletExpire;
+        GunBase.DidShotHitSomething += OnBulletExpire;
         GunBase.OnBulletFired += OnBulletFired;
         GunBase.OnEvaluateModifiers += OnEvaluateModifiers;
     }
@@ -28,6 +31,7 @@ public class BulletBasedModifier<T> : ModifierBase<T> where T : ModifierData
 
         BulletBase.UpdateBulletBase -= UpdateBulletBase;
         BulletBase.DidShotHitSomething -= OnBulletExpire;
+        GunBase.DidShotHitSomething += OnBulletExpire;
         GunBase.OnBulletFired -= OnBulletFired;
         GunBase.OnEvaluateModifiers -= OnEvaluateModifiers;
     }

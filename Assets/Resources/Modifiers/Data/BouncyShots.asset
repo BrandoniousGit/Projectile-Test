@@ -20,6 +20,7 @@ MonoBehaviour:
   MaxLevel: 1
   ProcChance: 0
   Rarity: 0
-  ModifiesStat: 0
-  ApplyType: 0
-  ValuePerLevel: []
+  ModifiesStat: 7
+  ApplyType: 1
+  ValuePerLevel:
+  - 2

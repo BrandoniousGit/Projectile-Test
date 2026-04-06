@@ -32,6 +32,12 @@ public abstract class ModifierBase : MonoBehaviour
     {
         return procChance > 100 - Random.Range(1, 101);
     }
+
+
+    public void UpdateDisplayName()
+    {
+        DisplayName = $"{GetData().ModifierName} {ModifierLevel.IntToRomalNumeral()}";
+    }
 }
 
 public abstract class ModifierBase<T> : ModifierBase where T : ModifierData

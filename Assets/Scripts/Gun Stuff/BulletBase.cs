@@ -12,9 +12,9 @@ public class BulletBase : MonoBehaviour
 
     private BulletData Data;
     private Rigidbody rb;
+    private Vector3 currentLinearVelocity;
     private float homingRange;
     private int bounces;
-    private float currentGravity, gravity;
     private GameObject closestEnemy;
 
     public static event Action<BulletBase> UpdateBulletBase;
@@ -34,36 +34,32 @@ public class BulletBase : MonoBehaviour
     public void SetData(BulletData data)
     {
         Data = data;
-    }
+        bounces = (int)Data.Bounces - 1;
 
-    public void ModifyGravity(float gravity)
-    {
-        this.gravity = -gravity;
-    }      
+        rb.linearVelocity = Data.BulletSpeed * transform.forward;
+    }    
     
     public void ModifyHoming(float homingRange)
     {
         this.homingRange = homingRange;
-    }    
-    
-    public void ModifyBounces(int bounces)
-    {
-        this.bounces += bounces;
     }
     #endregion
 
     #region private methods
     private void Update()
     {
-        currentGravity += gravity * Time.deltaTime;
-
-        rb.linearVelocity = Data.BulletSpeed * transform.forward;
-        rb.linearVelocity += new Vector3(0, currentGravity, 0);
+        if (Data.UseGravity)
+        {
+            rb.linearVelocity += new Vector3(0, Data.Gravity * Time.deltaTime, 0);
+            transform.forward = rb.linearVelocity.normalized;
+        }
 
         if (homingRange > 0)
         {
             Homing();
         }
+
+        currentLinearVelocity = rb.linearVelocity;
     }
 
     private void Homing()
@@ -85,7 +81,7 @@ public class BulletBase : MonoBehaviour
 
             if (Vector3.Angle(transform.forward, direction) < 60)
             {
-                transform.forward = Vector3.RotateTowards(transform.forward, direction, Mathf.PI * Time.deltaTime, 0);
+                rb.linearVelocity = Vector3.RotateTowards(rb.linearVelocity, direction, Mathf.PI * Time.deltaTime, 0);
             }
         }
     }
@@ -124,8 +120,9 @@ public class BulletBase : MonoBehaviour
             else if (bounces > 0)
             {
                 var hitNormal = collision.GetContact(0).normal;
-                var newForward = transform.forward - 2 * Vector3.Dot(transform.forward, hitNormal) * hitNormal;
-                transform.forward = newForward;
+
+                rb.linearVelocity = Vector3.Reflect(currentLinearVelocity, hitNormal);
+                transform.forward = rb.linearVelocity.normalized;
 
                 bounces--;
             }

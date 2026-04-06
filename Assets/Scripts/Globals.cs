@@ -13,6 +13,9 @@ public static class Globals
         public float BulletSpeed { get; set; }
         public float AngularOffsetX { get; set; }
         public float AngularOffsetY { get; set; }
+        public bool UseGravity { get; set; }
+        public float Gravity { get; set; }
+        public float Bounces { get; set; }
         public Vector3? Position { get; set; }
     }
 
@@ -26,7 +29,8 @@ public static class Globals
         Spread,
         CooldownDuration,
         Bounces,
-        HomingRange
+        HomingRange,
+        Gravity
     }
 
     public class WeaponStats
@@ -39,7 +43,9 @@ public static class Globals
         public StackMod CooldownDuration;
         public StackMod Bounces;
         public StackMod HomingRange;
+        public StackMod Gravity;
 
+        public bool UsesGravity;
         public bool IsHitscan;
     }
 
