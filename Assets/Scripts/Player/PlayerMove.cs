@@ -6,7 +6,7 @@ public class LocalPlayerMove : MonoBehaviour
 {
     [SerializeField] private Camera cam;
     [SerializeField] private Rigidbody rb;
-    [SerializeField] private float moveSpeed, groundAccel, airSpeed, airAccel, jumpForce, dashStrength, playerGravity, groundCheckDistance, sprintMoveSpeed, crouchMoveSpeed;
+    [SerializeField] private float moveSpeed, groundAccel, airSpeed, airAccel, airDecel, jumpForce, dashStrength, playerGravity, groundCheckDistance, sprintMoveSpeed, crouchMoveSpeed;
     [SerializeField] private bool grounded, crouching, sprinting, dashUsed, doubleJumpUsed;
     private bool canMove = true;
 
@@ -42,28 +42,43 @@ public class LocalPlayerMove : MonoBehaviour
 
             if (!grounded)
             {
-                if (mag.magnitude < airSpeed)
+                Vector3 horizontalVel = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+                float currentMag = horizontalVel.magnitude;
+
+                float angle = Vector3.Angle(horizontalVel, moveDir);
+
+                if (angle > 60 && currentMag > airSpeed)
                 {
-                    rb.AddForce(new Vector3(moveDir.x * airAccel * Time.deltaTime, 0, moveDir.z * airAccel * Time.deltaTime));
+                    float t = Mathf.InverseLerp(60f, 180f, angle);
+                    float penalty = Mathf.Lerp(1f, slowdownMulti, t);
+                    float targetSpeed = currentMag * penalty;
+                    float decel = airDecel;
+                    float newSpeed = Mathf.MoveTowards(currentMag, targetSpeed, decel * Time.deltaTime);
+
+                    Vector3 newHorizontal = horizontalVel.normalized * newSpeed;
+
+                    rb.linearVelocity = new Vector3(newHorizontal.x, rb.linearVelocity.y, newHorizontal.z);
+
+                    horizontalVel = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+                    currentMag = horizontalVel.magnitude;
+                }
+
+                Vector3 accel = moveDir * airAccel * Time.deltaTime;
+                Vector3 newVel = horizontalVel + accel;
+
+                if (currentMag < airSpeed)
+                {
+                    if (newVel.magnitude > airSpeed)
+                        newVel = newVel.normalized * airSpeed;
                 }
                 else
                 {
-                    if (zMove == 1)
-                    {
-                        var num1 = Mathf.Clamp((rb.linearVelocity.magnitude - airSpeed) / (100 - airSpeed), 0, 1);
-                        var changeRate = Mathf.Lerp(Mathf.PI / 2, Mathf.PI / 12, num1) * Time.deltaTime;
-
-                        var num2 = Mathf.Clamp((Vector3.Angle(rb.linearVelocity, moveDir) - 15) / 75, 0, 1);
-                        var newVel = Vector3.RotateTowards(rb.linearVelocity, moveDir, changeRate, Mathf.Lerp(0, airSpeed, num2) * Time.deltaTime);
-                        rb.linearVelocity = new Vector3(newVel.x, rb.linearVelocity.y, newVel.z);
-                    }
-                    else
-                    {
-                        rb.linearVelocity = rb.linearVelocity + (moveDir * airSpeed - rb.linearVelocity).normalized * airAccel * Time.deltaTime;
-                    }
+                    newVel = newVel.normalized * currentMag;
                 }
+
+                rb.linearVelocity = new Vector3(newVel.x, rb.linearVelocity.y, newVel.z);
             }
-            
+
             else
             {
                 rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, new Vector3(moveDir.x * speed, rb.linearVelocity.y, moveDir.z * speed), groundAccel);
