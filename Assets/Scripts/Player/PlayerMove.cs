@@ -176,18 +176,12 @@ public class LocalPlayerMove : MonoBehaviour
 
     void Update()
     {
-        spedometer.SetText($"{Math.Round(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude, 2)}"); 
+        //spedometer.SetText($"{Math.Round(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude, 2)}"); 
 
         if (Input.GetKeyDown(KeyCode.X))
         {
             FreeMe();
-        }        
-        
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            rb.AddExplosionForce(5000, new Vector3(0, 2, 0), 10);
         }
-
         if (cam == null || rb == null) return;
 
         rb.linearVelocity += new Vector3(0, playerGravity * Time.deltaTime, 0);
