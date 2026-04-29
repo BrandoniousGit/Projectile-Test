@@ -36,7 +36,7 @@ public class LocalPlayerMove : MonoBehaviour
 
             if (!grounded && !dashUsed && Input.GetKeyDown(KeyCode.LeftShift))
             {
-                rb.linearVelocity = new Vector3(moveDir.x * dashStrength, 0, moveDir.z * dashStrength);
+                rb.linearVelocity = new Vector3(moveDir.x * dashStrength, rb.linearVelocity.y, moveDir.z * dashStrength);
                 dashUsed = true;
             }
 

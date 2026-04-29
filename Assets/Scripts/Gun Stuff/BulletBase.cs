@@ -9,6 +9,7 @@ public class BulletBase : MonoBehaviour
 {
     public float deathTimer;
     public LayerMask collisionMask;
+    private Team Team;
 
     private BulletData Data;
     private Rigidbody rb;
@@ -42,6 +43,11 @@ public class BulletBase : MonoBehaviour
     public void ModifyHoming(float homingRange)
     {
         this.homingRange = homingRange;
+    }
+
+    public void SetBulletTeam(Team team)
+    {
+        Team = team;
     }
     #endregion
 

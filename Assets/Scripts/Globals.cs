@@ -17,6 +17,7 @@ public static class Globals
         public float Gravity { get; set; }
         public float Bounces { get; set; }
         public Vector3? Position { get; set; }
+        public Team BulletTeam { get; set; }
     }
 
     public enum ModifiesStat
@@ -94,7 +95,15 @@ public static class Globals
     {
         Burst,        //Burst Firing
         Single,       //Semi Automatic
-        BarrelSpin    //Mini-gun Type
+        BarrelSpin,   //Mini-gun Type
+        ChargeUp      //Charge before shot
+    }
+
+    public enum Team
+    {
+        Player,
+        Enemy,
+        Chaotic
     }
     #endregion
 

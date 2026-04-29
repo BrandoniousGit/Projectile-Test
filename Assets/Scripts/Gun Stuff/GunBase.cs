@@ -22,8 +22,6 @@ public class GunBase : EnhanceableBase
 
     public WeaponStats WeaponStats = new WeaponStats();
 
-    public float Damage;
-
     #region protected methods
     protected override void OnEnable()
     {
@@ -85,8 +83,6 @@ public class GunBase : EnhanceableBase
         OnEvaluateModifiers?.Invoke(WeaponStats);
         #endregion
 
-        Damage = WeaponStats.Damage.Value;
-
         Vector3 forward = (CameraTransform.position + CameraTransform.forward * 100 - transform.position).normalized;
 
         if (BaseWeaponData.m_gunType == GunType.BarrelSpin)
@@ -116,7 +112,6 @@ public class GunBase : EnhanceableBase
         }
 
         OnBulletFired?.Invoke(WeaponStats);
-        Damage = WeaponStats.Damage.Value;
     }
 
     private void CalculateSpinUpShotDelay()
