@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
-using System.Runtime.CompilerServices;
 using UnityEngine;
+using DamageNumbersPro;
 using static Globals;
 
 public class GunBase : EnhanceableBase
 {
+    public DamageNumber numberPrefab;
+
     public GameObject BulletGO;
     private bool canShoot;
     private float spinUp;
@@ -203,6 +205,8 @@ public class GunBase : EnhanceableBase
         {
             _hit.transform.gameObject.GetComponent<IDamageable>().RecieveDamage(data.Damage);
             DidShotHitSomething?.Invoke(true);
+
+            DamageNumber damageNumber = numberPrefab.Spawn(_hit.point, data.Damage);
         }
         else if (_hit.transform.gameObject != null && BaseWeaponData.m_isHitscan && hitscanBouncesUsed < WeaponStats.Bounces.Value - 1)
         {
