@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,14 +7,10 @@ public class ObjectiveManager : MonoBehaviour
 {
     public static ObjectiveManager Instance { get; private set; }
 
-    public Canvas ObjectiveCanvas;
-    public GameObject ScanProgressBar;
+    public Objective ObjectiveData;
 
     [SerializeField]
-    private TextMeshProUGUI ScanText;
-
-    [SerializeField]
-    private Image ScanProgressBarImage;
+    private TextMeshProUGUI ObjectiveText;
 
     private void Awake()
     {
@@ -24,14 +21,20 @@ public class ObjectiveManager : MonoBehaviour
         Instance = this;
     }
 
-    public void SetScanProgressBarVisible(bool visible)
+    private void OnEnable()
     {
-        ScanProgressBar.gameObject.SetActive(visible);
+        SetupObjective();
     }
 
-    public void UpdateScanProgressBar(float progress)
+    private void SetupObjective()
     {
-        ScanText.SetText($"{Mathf.Round(progress * 100)}%");
-        ScanProgressBarImage.fillAmount = progress;
+        // Wait for something else to finish for now I will just call on awake
+        var newObjective = gameObject.AddComponent<CollectObjective>();
+        newObjective.SetupObjective(ObjectiveData);
+    }
+
+    public void UpdateObjectiveText(string text)
+    {
+        ObjectiveText.SetText(text);
     }
 }

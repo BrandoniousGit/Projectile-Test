@@ -23,7 +23,7 @@ public abstract class Interactable : MonoBehaviour
     public bool lockPlayerWhileInteract;
 
     public abstract void OnInteract();
-    public virtual string GetDescription() { return "I am unset"; }
+    public abstract string GetDescription();
 
     public void ResetHoldTime() { holdTime = 0.0f; }
 }

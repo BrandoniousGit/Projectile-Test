@@ -22,7 +22,6 @@ public class TrailScan : MonoBehaviour
         
         if (isComplete)
         {
-            ObjectiveManager.Instance.SetScanProgressBarVisible(false);
             Destroy(gameObject);
         }
 
@@ -63,17 +62,12 @@ public class TrailScan : MonoBehaviour
         if (other.tag == "Player")
         {
             playersInScan += 1;
-            ObjectiveManager.Instance.SetScanProgressBarVisible(true);
+            //ObjectiveManager.Instance.SetScanProgressBarVisible(true);
         }
     }
 
     private void UpdateScanProgress()
     {
-        if (ObjectiveManager.Instance != null)
-        {
-            ObjectiveManager.Instance.UpdateScanProgressBar(progress / maxProgress);
-        }
-
         if (playersInScan > 0)
         {
             progress += Time.deltaTime;

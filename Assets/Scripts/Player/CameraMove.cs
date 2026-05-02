@@ -13,10 +13,12 @@ public class CameraMove : MonoBehaviour
     public float interactDistance;
     public TextMeshProUGUI interactionText;
 
+    public float fov;
+
     private float x, y;
     private bool isLocked;
     private float zoom = 30;
-    private float zoomMin = 20, zoomMax = 70;
+    private float zoomMin = 20;
 
     private void Start()
     {
@@ -90,23 +92,21 @@ public class CameraMove : MonoBehaviour
         if (Input.mouseScrollDelta.y > 0) zoom -= zoomSpeed;
         if (Input.mouseScrollDelta.y < 0) zoom += zoomSpeed;
 
-        zoom = Mathf.Clamp(zoom, zoomMin, zoomMax);
+        zoom = Mathf.Clamp(zoom, zoomMin, fov);
 
         if (Input.GetMouseButton(1))
         {
-            //Time.timeScale = 0.5f;
             Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, zoom, 0.1f);
         }
-        else if (!Mathf.Approximately(Camera.main.fieldOfView, 70))
+        else if (!Mathf.Approximately(Camera.main.fieldOfView, fov))
         {
-            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 70, 0.1f);
+            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, fov, 0.1f);
         }
         else
-            Camera.main.fieldOfView = 70;
+            Camera.main.fieldOfView = fov;
 
         if (Input.GetMouseButtonUp(1))
         {
-            //Time.timeScale = 1f;
             zoom = 30;
         }
     }

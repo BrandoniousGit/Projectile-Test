@@ -124,6 +124,24 @@ public static class Globals
         return new Color(r, g, b, alpha);
     }
 
+    public static Vector3 ResetVerticalComponent(this Vector3 inputVec)
+    {
+        return new Vector3(inputVec.x, 0, inputVec.z);
+    }
+
+    public static class WordsList
+    {
+        public static string[] Prefixes = new string[]
+        {
+            "Dark", "Light", "Damp", "Orange", "Small", "Fluffy", "Hard", "Elongated", "Right-Handed", "Left-Handed"
+        };
+
+        public static string[] Nouns = new string[]
+        {
+            "Cave", "Lamp", "Pebble", "Sewer", "Lift", "Cavern", "Factory", "Swamp", "Island", "Boat"
+        };
+    }
+
     public static string IntToRomalNumeral(this int num)
     {
         switch (num)
