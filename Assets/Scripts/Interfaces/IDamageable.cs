@@ -2,5 +2,6 @@ using UnityEngine;
 
 public interface IDamageable
 {
-    void RecieveDamage(float damage);
+    bool IsAlive { get; set; }
+    void ReceiveDamage(float damage);
 }

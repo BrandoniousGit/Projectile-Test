@@ -6,7 +6,7 @@ public class LocalPlayerMove : MonoBehaviour
 {
     [SerializeField] private Camera cam;
     [SerializeField] private Rigidbody rb;
-    [SerializeField] private float moveSpeed, groundAccel, airSpeed, airAccel, airDecel, jumpForce, dashStrength, playerGravity, groundCheckDistance, sprintMoveSpeed, crouchMoveSpeed;
+    [SerializeField] private float moveSpeed, groundAccel, airSpeed, airAccel, airDecel, jumpForce, dashStrength, playerGravity, groundCheckDistance, sprintMoveSpeed, crouchMoveSpeed, slideMinSpeed;
     [SerializeField] private bool grounded, crouching, sprinting, dashUsed, doubleJumpUsed;
     private bool canMove = true;
 
@@ -26,6 +26,7 @@ public class LocalPlayerMove : MonoBehaviour
         float zMove = Input.GetAxisRaw("Vertical");
 
         Vector3 direction = new Vector3(xMove, 0, zMove).normalized;
+        Vector3 horizontalSpeed = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
 
         if (direction.magnitude >= 0.1f)
         {
@@ -78,13 +79,16 @@ public class LocalPlayerMove : MonoBehaviour
 
                 rb.linearVelocity = new Vector3(newVel.x, rb.linearVelocity.y, newVel.z);
             }
-
-            else
+            else if (!crouching || horizontalSpeed.magnitude < slideMinSpeed)
             {
                 rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, new Vector3(moveDir.x * speed, rb.linearVelocity.y, moveDir.z * speed), groundAccel);
             }
         }
-        else if (grounded)
+        else if (grounded && !crouching)
+        {
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x * slowdownMulti, rb.linearVelocity.y, rb.linearVelocity.z * slowdownMulti);
+        }
+        else if (horizontalSpeed.magnitude < slideMinSpeed)
         {
             rb.linearVelocity = new Vector3(rb.linearVelocity.x * slowdownMulti, rb.linearVelocity.y, rb.linearVelocity.z * slowdownMulti);
         }
@@ -143,13 +147,27 @@ public class LocalPlayerMove : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftControl))
         {
             crouching = true;
-            cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, new Vector3(cam.transform.localPosition.x, 0, cam.transform.localPosition.z), 0.045f);
         }
 
         //Uncrouched
         if (!Input.GetKey(KeyCode.LeftControl))
         {
             crouching = false;
+        }
+
+        if (crouching)
+        {
+            if (!grounded)
+            {
+                cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, new Vector3(cam.transform.localPosition.x, 0.7f, cam.transform.localPosition.z), 0.045f);
+            }
+            else
+            {
+                cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, new Vector3(cam.transform.localPosition.x, 0, cam.transform.localPosition.z), 0.045f);
+            }
+        }
+        else
+        {
             cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, new Vector3(cam.transform.localPosition.x, 0.7f, cam.transform.localPosition.z), 0.045f);
         }
     }
@@ -176,7 +194,7 @@ public class LocalPlayerMove : MonoBehaviour
 
     void Update()
     {
-        //spedometer.SetText($"{Math.Round(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude, 2)}"); 
+        spedometer.SetText($"{Math.Round(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude, 2)}"); 
 
         if (Input.GetKeyDown(KeyCode.X))
         {

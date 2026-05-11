@@ -62,7 +62,7 @@ MonoBehaviour:
     farDistance: 50
     closeScale: 2
     farScale: 0.5
-  scaleWithFov: 1
+  scaleWithFov: 0
   defaultFov: 85
   fovCamera: {fileID: 0}
   cameraOverride: {fileID: 0}
@@ -83,13 +83,13 @@ MonoBehaviour:
     characterSpacing: 0
     size: 0
   digitSettings:
-    decimals: 0
+    decimals: 1
     decimalChar: .
-    hideZeros: 0
+    hideZeros: 1
     dotSeparation: 0
     dotDistance: 3
     dotChar: .
-    suffixShorten: 0
+    suffixShorten: 1
     suffixes:
     - K
     - M
@@ -300,7 +300,7 @@ MonoBehaviour:
     fromNumber: 0
     toNumber: 1000
     fromScale: 1
-    toScale: 2
+    toScale: 1.5
   enableScaleOverTime: 0
   scaleOverTime:
     serializedVersion: 2
@@ -330,8 +330,8 @@ MonoBehaviour:
   defaultOrthographicSize: 5
   maxOrthographicSize: 1.5
   orthographicCamera: {fileID: 0}
-  spamGroup: 
-  enableCombination: 0
+  spamGroup: Default
+  enableCombination: 1
   combinationSettings:
     method: 0
     maxDistance: 10
@@ -469,8 +469,8 @@ MonoBehaviour:
     desiredDirection: {x: 0, y: 0, z: 0}
   enablePush: 0
   pushSettings:
-    radius: 4
-    pushOffset: 0.8
+    radius: 3
+    pushOffset: 1
   updateDelay: 0.0125
   enablePooling: 0
   poolSize: 50

@@ -105,6 +105,12 @@ public static class Globals
         Enemy,
         Chaotic
     }
+
+    public enum EnemyState
+    {
+        Idle,
+        Aggressive
+    }
     #endregion
 
     #region public static methods
@@ -122,6 +128,19 @@ public static class Globals
         float b = (hex[5] + hex[4] * 16) / 255;
 
         return new Color(r, g, b, alpha);
+    }
+
+    public static bool TryGetDamageableComponent(this Transform go, out IDamageable damageable)
+    {
+        damageable = null;
+
+        if (go.GetComponent<IDamageable>() != null)
+        {
+            damageable = go.GetComponent<IDamageable>();
+            return true;
+        }
+
+        return false;
     }
 
     public static Vector3 ResetVerticalComponent(this Vector3 inputVec)

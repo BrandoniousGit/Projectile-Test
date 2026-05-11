@@ -116,7 +116,7 @@ public class BulletBase : MonoBehaviour
             {
                 if (collision.gameObject.TryGetComponent<IDamageable>(out var damageable))
                 {
-                    damageable.RecieveDamage(Data.Damage);
+                    damageable.ReceiveDamage(Data.Damage);
 
                     Destroy(gameObject);
 

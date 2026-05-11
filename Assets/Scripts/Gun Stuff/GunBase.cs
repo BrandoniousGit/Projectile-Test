@@ -132,7 +132,7 @@ public class GunBase : EnhanceableBase
         WeaponStats.FireRate.AddMod(spinUp, ModifierApplyType.Multiplicative);
     }
 
-    private void ShootBullet(Vector3 forwardVector, Vector3 origin)
+    private void ShootBullet(Vector3 forwardVector, Vector3 origin, bool isRiccochet = false)
     {
         var data = new BulletData()
         {
@@ -171,7 +171,7 @@ public class GunBase : EnhanceableBase
         else
         {
             Vector2 unitCircle = UnityEngine.Random.insideUnitCircle;
-            unitCircle *= origin != null ? 0 : data.Spread;
+            unitCircle *= isRiccochet ? 0 : data.Spread;
 
             forwardVector = Quaternion.AngleAxis(data.AngularOffsetX + unitCircle.x, transform.up) * forwardVector;
             forwardVector = Quaternion.AngleAxis(data.AngularOffsetY + unitCircle.y, transform.right) * forwardVector;
@@ -201,19 +201,25 @@ public class GunBase : EnhanceableBase
     {
         //Instantiate(weaponData.m_ImpactParticleSystem, _hit.point, Quaternion.LookRotation(_hit.normal));
 
-        if (_hit.transform.gameObject.GetComponent<IDamageable>() != null)
-        {
-            _hit.transform.gameObject.GetComponent<IDamageable>().RecieveDamage(data.Damage);
-            DidShotHitSomething?.Invoke(true);
+        var topLevelObject = _hit.transform.root;
 
-            DamageNumber damageNumber = numberPrefab.Spawn(_hit.point, data.Damage);
+        if (topLevelObject.TryGetDamageableComponent(out var damageableComponent))
+        {
+            if (damageableComponent.IsAlive)
+            {
+                damageableComponent.ReceiveDamage(data.Damage);
+
+                DamageNumber damageNumber = numberPrefab.Spawn(_hit.point, data.Damage);
+            }
+
+            DidShotHitSomething?.Invoke(true);
         }
-        else if (_hit.transform.gameObject != null && BaseWeaponData.m_isHitscan && hitscanBouncesUsed < WeaponStats.Bounces.Value - 1)
+        else if (topLevelObject.gameObject != null && BaseWeaponData.m_isHitscan && hitscanBouncesUsed < WeaponStats.Bounces.Value - 1)
         {
             hitscanBouncesUsed += 1;
             var newForward = forward - 2 * Vector3.Dot(transform.forward, _hit.normal) * _hit.normal;
 
-            ShootBullet(newForward, _hit.point);
+            ShootBullet(newForward, _hit.point, true);
         }
         else
         {

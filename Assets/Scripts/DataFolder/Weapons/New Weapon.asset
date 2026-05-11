@@ -22,11 +22,11 @@ MonoBehaviour:
   m_reserveMax: 0
   m_chargeTime: 0
   m_shotsUntilFullSpeed: 10
-  m_baseDamage: 6
+  m_baseDamage: 1.2
   m_bulletSpeed: 40
   m_bulletSize: 1
   m_reloadTime: 0
-  m_fireRate: 1.7
+  m_fireRate: 20
   m_aimSpread: 0
   m_damageFalloff: {x: 0, y: 0}
   m_shotSpeedRampRange: {x: 2, y: 5}
