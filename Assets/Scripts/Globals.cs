@@ -111,9 +111,18 @@ public static class Globals
         Idle,
         Aggressive
     }
+
+    public enum ObjectiveType
+    {
+        ClearRooms,
+        FindXItemsSmall,
+        FindXItemsLarge,
+        SeekEnemy,
+        BossStage
+    }
     #endregion
 
-    #region public static methods
+    #region public static methods   
     public static string RemoveFileExtension(this string fileName, int extensionLength)
     {
         return fileName.Remove(fileName.Length - extensionLength);

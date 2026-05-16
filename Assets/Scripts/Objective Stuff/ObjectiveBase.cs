@@ -4,16 +4,11 @@ using UnityEngine;
 
 public class ObjectiveBase : MonoBehaviour
 {
+    public ObjectiveData Data;
     public static event Action OnObjectiveCompleted;
 
-    public Objective Objective;
+    [SerializeField]
     private int progress;
-
-    public virtual void SetupObjective(Objective objectiveSetup)
-    {
-        Objective = objectiveSetup;
-        UpdateObjectiveText();
-    }
 
     protected virtual void OnEnable()
     {
@@ -27,19 +22,12 @@ public class ObjectiveBase : MonoBehaviour
 
     protected virtual void OnProgressUpdate(int progressValue)
     {
-        progress += progressValue;
-
         UpdateObjectiveText();
-
-        if (progress >= Objective.ProgressNeeded)
-        {
-            OnObjectiveCompleted?.Invoke();
-        }
     }
 
     protected virtual void UpdateObjectiveText()
     {
-        var newObjectiveText = FormatObjectiveText(Objective.ObjectiveTextFormatting);
+        var newObjectiveText = FormatObjectiveText(Data.ObjectiveStringFormatting);
 
         ObjectiveManager.Instance.UpdateObjectiveText(newObjectiveText);
     }
@@ -47,7 +35,7 @@ public class ObjectiveBase : MonoBehaviour
     private string FormatObjectiveText(string inputString)
     {
         inputString = inputString.Replace("{PROGRESS}", progress.ToString());
-        inputString = inputString.Replace("{TARGET}", Objective.ProgressNeeded.ToString());
+        inputString = inputString.Replace("{TARGET}", Data.ProgressNeeded.ToString());
 
         return inputString;
     }

@@ -7,7 +7,10 @@ public class ObjectiveManager : MonoBehaviour
 {
     public static ObjectiveManager Instance { get; private set; }
 
-    public Objective ObjectiveData;
+    public ObjectiveBase CurrentObjective;
+    public ObjectiveData CurrentData;
+
+    public static event Action OnRefreshClickedAction;
 
     [SerializeField]
     private TextMeshProUGUI ObjectiveText;
@@ -23,14 +26,43 @@ public class ObjectiveManager : MonoBehaviour
 
     private void OnEnable()
     {
-        SetupObjective();
+        Mission.OnMissionSelectClicked += SetData;
+    }    
+    
+    private void OnDisable()
+    {
+        Mission.OnMissionSelectClicked -= SetData;
     }
 
-    private void SetupObjective()
+    private void SetData(ObjectiveData data)
     {
-        // Wait for something else to finish for now I will just call on awake
-        var newObjective = gameObject.AddComponent<CollectObjective>();
-        newObjective.SetupObjective(ObjectiveData);
+        CurrentData = data;
+    }
+
+    public void OnRefreshClicked()
+    {
+        OnRefreshClickedAction?.Invoke();
+        CurrentData = null;
+    }
+
+    public void OnStartGameClicked()
+    {
+        if (CurrentData == null)
+        {
+            Debug.Log("You need to pick an objective first");
+            return;
+        }
+
+        var type = Type.GetType(CurrentData.Type.ToString(), false, true);
+
+        if (type == null)
+        {
+            Debug.Log($"{CurrentData.Type.ToString()} is not a valid type");
+            return;
+        }
+
+        CurrentObjective = (ObjectiveBase)gameObject.AddComponent(type);
+        CurrentObjective.Data = CurrentData;
     }
 
     public void UpdateObjectiveText(string text)

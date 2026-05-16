@@ -74,6 +74,11 @@ public class EnemyBase : MonoBehaviour, IDamageable
         }
     }
 
+    //protected virtual void ShootHitscan(Vector3 startPos, Vector3 dir, )
+    //{
+
+    //}
+
     private void TryLookAtPlayer()
     {
         var playerPos = PlayerManager.Instance.GetPlayerPosition();

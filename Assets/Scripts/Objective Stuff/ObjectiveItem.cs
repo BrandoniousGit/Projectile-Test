@@ -5,11 +5,9 @@ public class ObjectiveItem : Interactable
     public static event Action<int> OnObjectiveProgress;
     public int progressAmount;
 
-    private bool hasBeenInteractedWith;
-
     public override string GetDescription()
     {
-        if (hasBeenInteractedWith)
+        if (isOn)
         {
             return "You have already interacted with this cube!";
         }
@@ -19,12 +17,12 @@ public class ObjectiveItem : Interactable
 
     public override void OnInteract()
     {
-        if (hasBeenInteractedWith)
+        if (isOn)
         {
             return;
         }
 
-        hasBeenInteractedWith = true;
+        isOn = true;
         OnObjectiveProgress?.Invoke(progressAmount);
     }
 }

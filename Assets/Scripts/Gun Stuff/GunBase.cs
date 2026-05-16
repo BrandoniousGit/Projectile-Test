@@ -219,7 +219,13 @@ public class GunBase : EnhanceableBase
             hitscanBouncesUsed += 1;
             var newForward = forward - 2 * Vector3.Dot(transform.forward, _hit.normal) * _hit.normal;
 
-            ShootBullet(newForward, _hit.point, true);
+            VectorData vecData = new VectorData
+            { 
+                Forward = newForward, 
+                Point = _hit.point 
+            };
+
+            StartCoroutine("WaitBeforeBounce", vecData);
         }
         else
         {
@@ -248,6 +254,19 @@ public class GunBase : EnhanceableBase
         canShoot = false;
         yield return new WaitForSeconds(1 / WeaponStats.FireRate.Value);
         canShoot = true;
+    }    
+    
+    IEnumerator WaitBeforeBounce(VectorData data)
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        ShootBullet(data.Forward, data.Point, true);
     }
     #endregion
+
+    public class VectorData
+    {
+        public Vector3 Forward;
+        public Vector3 Point;
+    }
 }

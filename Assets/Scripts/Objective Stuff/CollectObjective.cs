@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CollectObjective : ObjectiveBase
+public class FindXItemsSmall : ObjectiveBase
 {
-    //public string objectiveTextFormatting => "Collect Items: {0}/{1}";
+    
 }

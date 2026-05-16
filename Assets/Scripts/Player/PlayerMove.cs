@@ -28,6 +28,7 @@ public class LocalPlayerMove : MonoBehaviour
         Vector3 direction = new Vector3(xMove, 0, zMove).normalized;
         Vector3 horizontalSpeed = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
 
+        // If holding any direction
         if (direction.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.transform.eulerAngles.y;
