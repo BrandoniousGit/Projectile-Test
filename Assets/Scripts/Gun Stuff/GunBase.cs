@@ -11,7 +11,6 @@ public class GunBase : EnhanceableBase
     public GameObject BulletGO;
     private bool canShoot;
     private float spinUp;
-    private int hitscanBouncesUsed;
 
     public WeaponData BaseWeaponData;
     public LayerMask hitLayers;
@@ -99,7 +98,7 @@ public class GunBase : EnhanceableBase
                 case GunType.Single:
                 case GunType.BarrelSpin:
 
-                    ShootBullet(forward, weaponMuzzlePos.position);
+                    ShootBullet(forward, weaponMuzzlePos.position, hitscanBouncesLeft: (int)WeaponStats.Bounces.Value);
 
                     if (doShotDelay)
                     {
@@ -132,7 +131,7 @@ public class GunBase : EnhanceableBase
         WeaponStats.FireRate.AddMod(spinUp, ModifierApplyType.Multiplicative);
     }
 
-    private void ShootBullet(Vector3 forwardVector, Vector3 origin, bool isRiccochet = false)
+    private void ShootBullet(Vector3 forwardVector, Vector3 origin, bool isRiccochet = false, int hitscanBouncesLeft = 0)
     {
         var data = new BulletData()
         {
@@ -180,7 +179,7 @@ public class GunBase : EnhanceableBase
 
             if (hitCheck)
             {
-                WhatDidIHit(hit, data, forwardVector);
+                WhatDidIHit(hit, data, forwardVector, hitscanBouncesLeft);
 
                 LineRenderer trail = Instantiate(BaseWeaponData.m_bulletTrail, origin, Quaternion.identity);
                 Vector3[] positions = new Vector3[] { trail.transform.position, hit.point };
@@ -197,7 +196,7 @@ public class GunBase : EnhanceableBase
         }
     }
 
-    private void WhatDidIHit(RaycastHit _hit, BulletData data, Vector3 forward = new Vector3())
+    private void WhatDidIHit(RaycastHit _hit, BulletData data, Vector3 forward = new Vector3(), int hitscanBouncesLeft = 0)
     {
         //Instantiate(weaponData.m_ImpactParticleSystem, _hit.point, Quaternion.LookRotation(_hit.normal));
 
@@ -214,22 +213,21 @@ public class GunBase : EnhanceableBase
 
             DidShotHitSomething?.Invoke(true);
         }
-        else if (topLevelObject.gameObject != null && BaseWeaponData.m_isHitscan && hitscanBouncesUsed < WeaponStats.Bounces.Value - 1)
+        else if (topLevelObject.gameObject != null && BaseWeaponData.m_isHitscan && hitscanBouncesLeft > 0)
         {
-            hitscanBouncesUsed += 1;
             var newForward = forward - 2 * Vector3.Dot(transform.forward, _hit.normal) * _hit.normal;
 
             VectorData vecData = new VectorData
             { 
                 Forward = newForward, 
-                Point = _hit.point 
+                Point = _hit.point,
+                HitscanBouncesLeft = hitscanBouncesLeft - 1
             };
 
             StartCoroutine("WaitBeforeBounce", vecData);
         }
         else
         {
-            hitscanBouncesUsed = 0;
             DidShotHitSomething?.Invoke(false);
         }
     }
@@ -241,7 +239,7 @@ public class GunBase : EnhanceableBase
         canShoot = false;
         for (int i = 0; i < BaseWeaponData.m_burstCount; i++)
         {
-            ShootBullet(forward, weaponMuzzlePos.position);
+            ShootBullet(forward, weaponMuzzlePos.position, hitscanBouncesLeft: (int)WeaponStats.Bounces.Value);
             yield return new WaitForSeconds(BaseWeaponData.m_timeBetweenBurst);
         }
 
@@ -260,7 +258,7 @@ public class GunBase : EnhanceableBase
     {
         yield return new WaitForSeconds(0.1f);
 
-        ShootBullet(data.Forward, data.Point, true);
+        ShootBullet(data.Forward, data.Point, true, data.HitscanBouncesLeft);
     }
     #endregion
 
@@ -268,5 +266,6 @@ public class GunBase : EnhanceableBase
     {
         public Vector3 Forward;
         public Vector3 Point;
+        public int HitscanBouncesLeft;
     }
 }

@@ -5,14 +5,17 @@ public class ObjectiveItem : Interactable
     public static event Action<int> OnObjectiveProgress;
     public int progressAmount;
 
+    public string InteractString;
+    public string InteractedWithString;
+
     public override string GetDescription()
     {
         if (isOn)
         {
-            return "You have already interacted with this cube!";
+            return InteractedWithString;
         }
 
-        return $"Press 'E' to advance objective by {progressAmount}";
+        return $"{InteractString}";
     }
 
     public override void OnInteract()

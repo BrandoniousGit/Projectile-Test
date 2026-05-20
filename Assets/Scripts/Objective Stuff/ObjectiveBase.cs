@@ -1,14 +1,18 @@
 using System;
+using System.Data;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class ObjectiveBase : MonoBehaviour
+public abstract class ObjectiveBase : MonoBehaviour
 {
     public ObjectiveData Data;
     public static event Action OnObjectiveCompleted;
 
     [SerializeField]
     private int progress;
+
+    public abstract void SetupObjectiveItems();
+    public abstract void SetData(ObjectiveData data);
 
     protected virtual void OnEnable()
     {
@@ -22,14 +26,15 @@ public class ObjectiveBase : MonoBehaviour
 
     protected virtual void OnProgressUpdate(int progressValue)
     {
+        progress += progressValue;
         UpdateObjectiveText();
     }
 
     protected virtual void UpdateObjectiveText()
     {
-        var newObjectiveText = FormatObjectiveText(Data.ObjectiveStringFormatting);
+        var newProgressionText = FormatObjectiveText(Data.ObjectiveStringFormatting);
 
-        ObjectiveManager.Instance.UpdateObjectiveText(newObjectiveText);
+        ObjectiveManager.Instance.UpdateProgressionText(newProgressionText);
     }
 
     private string FormatObjectiveText(string inputString)

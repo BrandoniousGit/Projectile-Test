@@ -18,6 +18,15 @@ public class LocalPlayerMove : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        var camList = Camera.allCameras;
+
+        foreach (var camera in camList)
+        {
+            if (camera != cam)
+            {
+                camera.gameObject.SetActive(false);
+            }
+        }
     }
 
     void UserInput()

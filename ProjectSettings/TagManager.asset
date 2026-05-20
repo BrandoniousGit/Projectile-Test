@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Enemy
   - GunFront
+  - CollectSmallSpawn
+  - PlayerSpawn
   layers:
   - Default
   - TransparentFX

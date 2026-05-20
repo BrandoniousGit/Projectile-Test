@@ -15,6 +15,7 @@ MonoBehaviour:
   ObjectiveName: Collect Boxes
   ObjectiveStringFormatting: 'Boxes Collected: {PROGRESS} / {TARGET}'
   ObjectivePreview: '- Collect 5 Boxes'
+  ObjectiveItemResourceName: ObjectiveBox
   Weight: 5
   ProgressNeeded: 5
   Type: 1

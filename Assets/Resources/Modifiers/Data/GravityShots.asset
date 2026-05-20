@@ -23,4 +23,4 @@ MonoBehaviour:
   ModifiesStat: 9
   ApplyType: 1
   ValuePerLevel:
-  - 100
+  - -50

@@ -1,19 +1,25 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ObjectiveManager : MonoBehaviour
 {
     public static ObjectiveManager Instance { get; private set; }
 
-    public ObjectiveBase CurrentObjective;
-    public ObjectiveData CurrentData;
+    public ObjectiveBase currentObjective;
+    public ObjectiveData currentData;
+    public GameObject playerPrefab;
 
     public static event Action OnRefreshClickedAction;
 
     [SerializeField]
+    private Canvas ObjectiveCanvas;
+
+    [SerializeField]
     private TextMeshProUGUI ObjectiveText;
+    [SerializeField]
+    private TextMeshProUGUI ProgressionText;    
 
     private void Awake()
     {
@@ -26,47 +32,64 @@ public class ObjectiveManager : MonoBehaviour
 
     private void OnEnable()
     {
-        Mission.OnMissionSelectClicked += SetData;
+        Mission.OnMissionSelectClicked += SetDataFromMissionSelect;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }    
     
     private void OnDisable()
     {
-        Mission.OnMissionSelectClicked -= SetData;
+        Mission.OnMissionSelectClicked -= SetDataFromMissionSelect;
     }
 
-    private void SetData(ObjectiveData data)
+    private void SetDataFromMissionSelect(ObjectiveData data)
     {
-        CurrentData = data;
+        currentData = data;
+        ObjectiveText.SetText(data.ObjectivePreview);
     }
 
     public void OnRefreshClicked()
     {
         OnRefreshClickedAction?.Invoke();
-        CurrentData = null;
+        currentData = null;
     }
 
     public void OnStartGameClicked()
     {
-        if (CurrentData == null)
+        if (currentData == null)
         {
             Debug.Log("You need to pick an objective first");
             return;
         }
 
-        var type = Type.GetType(CurrentData.Type.ToString(), false, true);
+        var type = Type.GetType(currentData.Type.ToString(), false, true);
 
         if (type == null)
         {
-            Debug.Log($"{CurrentData.Type.ToString()} is not a valid type");
+            Debug.Log($"{currentData.Type.ToString()} is not a valid type");
             return;
         }
 
-        CurrentObjective = (ObjectiveBase)gameObject.AddComponent(type);
-        CurrentObjective.Data = CurrentData;
+        currentObjective = (ObjectiveBase)gameObject.AddComponent(type);
+        currentObjective.SetData(currentData);
+
+        //Add fade or whatever scene transision here
+        SceneManager.LoadScene("TestScene");
     }
 
-    public void UpdateObjectiveText(string text)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        ObjectiveText.SetText(text);
+        if (scene.name == "TestScene")
+        {
+            var spawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawn");
+            Instantiate(playerPrefab, spawnPoint != null ? spawnPoint.transform.position : Vector3.zero, Quaternion.identity);
+
+            ObjectiveCanvas.gameObject.SetActive(true);
+            currentObjective.SetupObjectiveItems();
+        }
+    }
+
+    public void UpdateProgressionText(string text)
+    {
+        ProgressionText.SetText(text);
     }
 }

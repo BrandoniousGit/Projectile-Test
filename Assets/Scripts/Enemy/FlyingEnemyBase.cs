@@ -1,7 +1,5 @@
-using UnityEditor;
 using UnityEngine;
 using static Globals;
-using static UnityEngine.EventSystems.EventTrigger;
 
 public class FlyingEnemyBase : EnemyBase
 {

@@ -12,14 +12,14 @@ public class ExtraShot : BulletBasedModifier<ExtraShotData>
 
         if (shotsFired >= Data.ShotsUntilExtraPerLevel[ModifierLevel - 1])
         {
-            var halfShotDelay = (1 / BaseWeapon.BaseWeaponData.m_fireRate) / 4;
-            StartCoroutine("WaitForHalfShotDelay", halfShotDelay);
+            var quarterShotDelay = (1 / BaseWeapon.BaseWeaponData.m_fireRate) / 4;
+            StartCoroutine("WaitForHalfShotDelay", quarterShotDelay);
 
             shotsFired = -1;
         }
     }
 
-    public IEnumerator WaitForHalfShotDelay(float shotDelay)
+    public IEnumerator WaitForQuarterShotDelay(float shotDelay)
     {
         yield return new WaitForSeconds(shotDelay);
         BaseWeapon.TryShoot(false);

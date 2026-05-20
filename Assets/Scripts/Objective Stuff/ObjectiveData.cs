@@ -8,6 +8,7 @@ public class ObjectiveData : ScriptableObject
     public string ObjectiveName;
     public string ObjectiveStringFormatting;
     public string ObjectivePreview;
+    public string ObjectiveItemResourceName;
     public int Weight;
     public int ProgressNeeded;
     public ObjectiveType Type;
