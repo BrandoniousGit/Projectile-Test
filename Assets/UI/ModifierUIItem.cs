@@ -7,16 +7,16 @@ public class ModifierUIItem : MonoBehaviour
     public TextMeshProUGUI UIItemText;
     public string InternalItemName;
 
-    public static Action<bool, string> UpdateModifierEvent;
+    public static Action<bool, string, int> UpdateModifierEvent;
 
     public void OnModifierUpgradeClicked()
     {
-        UpdateModifierEvent?.Invoke(true, InternalItemName);
+        UpdateModifierEvent?.Invoke(true, InternalItemName, 1);
     }    
     
     public void OnModifierDowngradeClicked()
     {
-        UpdateModifierEvent?.Invoke(false, InternalItemName);
+        UpdateModifierEvent?.Invoke(false, InternalItemName, 1);
     }
 
     public void Update()

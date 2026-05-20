@@ -98,7 +98,7 @@ public class GunBase : EnhanceableBase
                 case GunType.Single:
                 case GunType.BarrelSpin:
 
-                    ShootBullet(forward, weaponMuzzlePos.position, hitscanBouncesLeft: (int)WeaponStats.Bounces.Value);
+                    ShootBullet(forward, weaponMuzzlePos.position, hitscanBouncesLeft: (int)WeaponStats.Bounces.Value - 1);
 
                     if (doShotDelay)
                     {
@@ -140,7 +140,7 @@ public class GunBase : EnhanceableBase
             BulletSpeed = WeaponStats.BulletSpeed.Value,
             UseGravity = WeaponStats.UsesGravity,
             Gravity = WeaponStats.Gravity.Value,
-            Bounces = WeaponStats.Bounces.Value
+            Bounces = WeaponStats.Bounces.Value - 1
         };
 
         //Projectile shots

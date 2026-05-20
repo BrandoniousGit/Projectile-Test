@@ -16,11 +16,13 @@ public class EnhanceableBase : MonoBehaviour
     protected virtual void OnEnable()
     {
         ModifierUIItem.UpdateModifierEvent += UpdateModifier;
+        UpgradeScreen.UpdateModifierEvent += UpdateModifier;
     }    
     
     protected virtual void OnDisable()
     {
         ModifierUIItem.UpdateModifierEvent -= UpdateModifier;
+        UpgradeScreen.UpdateModifierEvent -= UpdateModifier;
     }
 
     protected virtual void Update()
@@ -33,7 +35,7 @@ public class EnhanceableBase : MonoBehaviour
 
     #region editor buttons
     [ProButton]
-    public void UpdateModifier(bool IsUpgrading, string ModifierTypeString)
+    public void UpdateModifier(bool IsUpgrading, string ModifierTypeString, int UpgradeCount)
     {
         if (string.IsNullOrWhiteSpace(ModifierTypeString)) return;
 
@@ -49,7 +51,7 @@ public class EnhanceableBase : MonoBehaviour
                 {
                     if (existingModifier.ModifierLevel < existingModifier.GetData().MaxLevel)
                     {
-                        existingModifier.ModifierLevel++;
+                        existingModifier.ModifierLevel += UpgradeCount;
                         existingModifier.UpdateDisplayName();
                     }
                 }
@@ -57,7 +59,7 @@ public class EnhanceableBase : MonoBehaviour
                 {
                     if (existingModifier.ModifierLevel > 1)
                     {
-                        existingModifier.ModifierLevel--;
+                        existingModifier.ModifierLevel -= UpgradeCount;
                         existingModifier.UpdateDisplayName();
                     }
                     else

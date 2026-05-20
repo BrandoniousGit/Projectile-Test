@@ -8,6 +8,9 @@ TagManager:
   - GunFront
   - CollectSmallSpawn
   - PlayerSpawn
+  - InventorySlot
+  - UIItem
+  - EventSystem
   layers:
   - Default
   - TransparentFX
