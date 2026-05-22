@@ -4,6 +4,7 @@ public abstract class ModifierBase : MonoBehaviour
 {
     public int ModifierLevel = 1;
     public string DisplayName;
+    public string FormattedDescription;
 
     public abstract ModifierData GetData();
 
@@ -11,6 +12,7 @@ public abstract class ModifierBase : MonoBehaviour
     protected virtual void OnActionPerformed() { return; }
     protected virtual void OnActiveAbilityPressed() { return; }
     protected virtual void OnSetData() { return; }
+    protected abstract string GetDescription();
     #endregion
 
     protected virtual void OnEnable()
@@ -23,10 +25,7 @@ public abstract class ModifierBase : MonoBehaviour
         EnhanceableBase.OnActiveAbilityButtonPressed -= OnActiveAbilityPressed;
     }
 
-    public virtual void SetData(ModifierData data)
-    {
-
-    }
+    public virtual void SetData(ModifierData data) { }
 
     public bool TryProcModifier(float procChance)
     {

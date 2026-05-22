@@ -9,6 +9,7 @@ public class ModifierData : ScriptableObject
     public string ModifierName = "New Modifier";
     public string InternalName = "NewModifier";
     public string PrerequisiteModifier;
+    [TextArea]
     public string Description = "Enter a description.";
     public int MaxLevel = 1;
 

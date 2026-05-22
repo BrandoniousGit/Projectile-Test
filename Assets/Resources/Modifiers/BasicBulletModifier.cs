@@ -4,6 +4,11 @@ using static Globals;
 
 public class BasicBulletModifier : BulletBasedModifier<BasicModifierData>
 {
+    private void Start()
+    {
+        FormattedDescription = FormatDescription(Data.Description);
+    }
+
     protected override void OnEvaluateModifiers(WeaponStats data)
     {
         switch (Data.ModifiesStat)
@@ -21,5 +26,16 @@ public class BasicBulletModifier : BulletBasedModifier<BasicModifierData>
                 data.Gravity.AddMod(1 + (1f * Data.ValuePerLevel[ModifierLevel - 1]), Data.ApplyType);
                 break;
         }
+    }
+
+    protected override string GetDescription() 
+    {
+        return FormatDescription(Data.Description);
+    }
+
+    private string FormatDescription(string description)
+    {
+        description = description.Replace("{VALUE}", Data.ValuePerLevel[ModifierLevel - 1].ToString());
+        return description;
     }
 }

@@ -17,19 +17,14 @@ MonoBehaviour:
   InternalName: RapidFire
   PrerequisiteModifier: 
   Description: Enter a description.
-  MaxLevel: 10
+  MaxLevel: 5
   ProcChance: 0
-  Rarity: 1
+  Rarity: 0
   ModifiesStat: 4
   ApplyType: 1
   ValuePerLevel:
-  - 10
   - 20
-  - 30
-  - 40
+  - 35
   - 50
-  - 60
-  - 70
-  - 80
-  - 90
-  - 100
+  - 62.5
+  - 75

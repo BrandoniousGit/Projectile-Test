@@ -11,6 +11,8 @@ public class BulletBasedModifier<T> : ModifierBase<T> where T : ModifierData
     protected virtual void UpdateBulletBase(BulletBase bulletBase) { return; }
     protected virtual void OnBulletExpire(bool hasHit) { return; }
 
+    protected override string GetDescription() { return ""; }
+
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -31,7 +33,7 @@ public class BulletBasedModifier<T> : ModifierBase<T> where T : ModifierData
 
         BulletBase.UpdateBulletBase -= UpdateBulletBase;
         BulletBase.DidShotHitSomething -= OnBulletExpire;
-        GunBase.DidShotHitSomething += OnBulletExpire;
+        GunBase.DidShotHitSomething -= OnBulletExpire;
         GunBase.OnBulletFired -= OnBulletFired;
         GunBase.OnEvaluateModifiers -= OnEvaluateModifiers;
     }

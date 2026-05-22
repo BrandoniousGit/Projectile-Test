@@ -16,13 +16,11 @@ public class EnhanceableBase : MonoBehaviour
     protected virtual void OnEnable()
     {
         ModifierUIItem.UpdateModifierEvent += UpdateModifier;
-        UpgradeScreen.UpdateModifierEvent += UpdateModifier;
     }    
     
     protected virtual void OnDisable()
     {
         ModifierUIItem.UpdateModifierEvent -= UpdateModifier;
-        UpgradeScreen.UpdateModifierEvent -= UpdateModifier;
     }
 
     protected virtual void Update()

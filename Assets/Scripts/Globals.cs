@@ -52,21 +52,23 @@ public static class Globals
 
     public static Dictionary<Rarity, string> RarityLookup = new()
     {
-        { Rarity.Common, "#DBF6E1" },
-        { Rarity.Uncommon, "#42CF60" },
-        { Rarity.Rare, "#27C0DB" },
-        { Rarity.Epic, "#A537E5" },
-        { Rarity.Legendary, "#A537E5" }
+        { Rarity.Frequent, "#FFEEA1" },
+        { Rarity.Infrequent, "#5AE076" },
+        { Rarity.Jolly, "#27C0DB" },
+        { Rarity.Stupendous, "#B54FF0" },
+        { Rarity.Outstanding, "#E5377A" },
+        { Rarity.Majestic, "#6565ED" }
     };
 
     #region enums
     public enum Rarity
     {
-        Common,
-        Uncommon,
-        Rare,
-        Epic,
-        Legendary
+        Frequent,
+        Infrequent,
+        Jolly,
+        Stupendous,
+        Outstanding,
+        Majestic
     }    
     
     public enum EnhanceableItem
@@ -126,17 +128,6 @@ public static class Globals
     public static string RemoveFileExtension(this string fileName, int extensionLength)
     {
         return fileName.Remove(fileName.Length - extensionLength);
-    }
-
-    public static Color HexCodeToColour(string hex, float alpha)
-    {
-        hex = new string(hex.Where(character => character != '#').ToArray());
-
-        float r = (hex[1] + hex[0] * 16) / 255;
-        float g = (hex[3] + hex[2] * 16) / 255;
-        float b = (hex[5] + hex[4] * 16) / 255;
-
-        return new Color(r, g, b, alpha);
     }
 
     public static bool TryGetDamageableComponent(this Transform go, out IDamageable damageable)

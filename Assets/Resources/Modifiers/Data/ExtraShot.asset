@@ -19,5 +19,5 @@ MonoBehaviour:
   Description: Enter a description.
   MaxLevel: 3
   ProcChance: 0
-  Rarity: 0
+  Rarity: 2
   ShotsUntilExtraPerLevel: 050000000300000001000000
