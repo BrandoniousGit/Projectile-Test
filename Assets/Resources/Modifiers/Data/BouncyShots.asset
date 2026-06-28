@@ -16,7 +16,7 @@ MonoBehaviour:
   ModifierName: Bouncy Shots
   InternalName: BouncyShots
   PrerequisiteModifier: 
-  Description: Adds +{VALUE} bounces to each shot!
+  Description: Adds +{VALUE} bounces to each shot
   MaxLevel: 3
   ProcChance: 0
   Rarity: 2

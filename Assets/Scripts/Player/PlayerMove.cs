@@ -204,7 +204,7 @@ public class LocalPlayerMove : MonoBehaviour
 
     void Update()
     {
-        spedometer.SetText($"{Math.Round(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude, 2)}"); 
+        //spedometer.SetText($"{Math.Round(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude, 2)}"); 
 
         if (Input.GetKeyDown(KeyCode.X))
         {

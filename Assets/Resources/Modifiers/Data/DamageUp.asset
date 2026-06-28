@@ -16,7 +16,7 @@ MonoBehaviour:
   ModifierName: Damage Up
   InternalName: DamageUp
   PrerequisiteModifier: 
-  Description: Enter a description.
+  Description: Increases weapon damage by +{VALUE}%
   MaxLevel: 10
   ProcChance: 0
   Rarity: 0

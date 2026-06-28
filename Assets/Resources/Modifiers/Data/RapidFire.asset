@@ -16,7 +16,7 @@ MonoBehaviour:
   ModifierName: Rapid Fire
   InternalName: RapidFire
   PrerequisiteModifier: 
-  Description: Enter a description.
+  Description: Boosts fire rate by +{VALUE}%
   MaxLevel: 5
   ProcChance: 0
   Rarity: 0

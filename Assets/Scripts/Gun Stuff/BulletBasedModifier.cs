@@ -4,20 +4,19 @@ using static Globals;
 public class BulletBasedModifier<T> : ModifierBase<T> where T : ModifierData
 {
     private GameObject BulletGO;
-    public GunBase BaseWeapon;
+    public GunBase BaseWeapon => (GunBase)Enhanceable;
 
     protected virtual void OnBulletFired(WeaponStats data) { return; }
     protected virtual void OnEvaluateModifiers(WeaponStats data) { return; }
     protected virtual void UpdateBulletBase(BulletBase bulletBase) { return; }
     protected virtual void OnBulletExpire(bool hasHit) { return; }
 
-    protected override string GetDescription() { return ""; }
+    public override string GetDescription() { return ""; }
 
     protected override void OnEnable()
     {
         base.OnEnable();
 
-        BaseWeapon = gameObject.GetComponent<GunBase>();
         BulletGO = (GameObject)Resources.Load("Bullet");
 
         BulletBase.UpdateBulletBase += UpdateBulletBase;

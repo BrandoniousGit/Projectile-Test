@@ -30,4 +30,13 @@ public class ChainShot : BulletBasedModifier<ChainShotData>
             EffectAmount = Data.EffectAmountCap;
         }
     }
+
+    public override string GetDescription()
+    {
+        var description = Data.Description;
+
+        description = description.Replace("{VALUE}", Data.EffectAmountPerLevel[ModifierLevel - 1].ToString());
+        description = description.Replace("{EFFECT}", EffectAmount.ToString());
+        return description;
+    }
 }

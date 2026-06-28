@@ -19,9 +19,6 @@ public class TokenScreen : MonoBehaviour
 
     public GameObject InventorySlot;
     public GameObject UpgradeToken;
-    public Sprite OctagonTile;
-    public Sprite StraightTile;
-    public Sprite CornerTile;
     public Sprite BackgroundTile;
 
     public Vector2 GridSize;
@@ -44,15 +41,16 @@ public class TokenScreen : MonoBehaviour
         graphicRaycaster = GetComponent<GraphicRaycaster>();
         eventSystem = GameObject.FindGameObjectWithTag("EventSystem").GetComponent<EventSystem>();
 
-        CreateInventory(new Vector2(180, 150), new Vector2(3,3), InventorySlotType.Upgrade);
-        CreateInventory(new Vector2(480, 100), new Vector2(3,5), InventorySlotType.Storage);
+        Vector2 screenCenter = upgradeCanvas.GetComponent<RectTransform>().sizeDelta / 2;
+
+        CreateInventory(new Vector2(screenCenter.x - (TileSize - 0.5f) * 1.5f, screenCenter.y - (TileSize - 1) * 1.5f), new Vector2(3, 3), InventorySlotType.Upgrade);
+        CreateInventory(new Vector2(screenCenter.x - (TileSize - 0.5f) * 4.5f, 0), new Vector2(9, 2), InventorySlotType.Storage);
+
+        upgradeCanvas.enabled = false;
     }
 
     private void CreateInventory(Vector2 bottomLeft, Vector2 gridSize, InventorySlotType slotType)
     {
-        var modifiedTileSize = TileSize * upgradeCanvas.transform.localScale.x;
-        var modifiedOffset = bottomLeft * upgradeCanvas.transform.localScale.x;
-
         for (int i = 0; i < gridSize.x; i++)
         {
             for (int j = 0; j < gridSize.y; j++)
@@ -60,15 +58,19 @@ public class TokenScreen : MonoBehaviour
                 var uiItem = Instantiate
                 (
                     InventorySlot, 
-                    new Vector3(i * modifiedTileSize + modifiedOffset.x, j * modifiedTileSize + modifiedOffset.y, 0), 
+                    Vector3.zero, 
                     Quaternion.identity, 
                     upgradeCanvas.gameObject.transform
                 );
 
                 var slot = uiItem.GetComponent<InventorySlot>();
                 slot.Init(new Vector2(i, j), slotType);
+
+                var rectTrans = uiItem.GetComponent<RectTransform>();
+                rectTrans.sizeDelta *= TileSize;
+                rectTrans.anchoredPosition = new Vector3(i * (TileSize - 0.5f) + bottomLeft.x, j * (TileSize - 0.5f) + bottomLeft.y, 0);
+
                 inventorySlots.Add(slot);
-                uiItem.transform.localScale *= TileSize;
                 uiItem.GetComponent<Image>().sprite = BackgroundTile;
             }
         }
@@ -96,6 +98,8 @@ public class TokenScreen : MonoBehaviour
 
             var upgradeComponent = newToken.GetComponent<UpgradeToken>();
             var modifierData = (ModifierData)Resources.Load($"Modifiers/Data/{modifierTypeString.ToLower()}");
+            upgradeComponent.MyWeapon = Enhanceable;
+            upgradeComponent.MySlot = InventorySlotType.Storage;
             upgradeComponent.Init(modifierData);
 
             slot.currentToken = upgradeComponent;
@@ -168,7 +172,11 @@ public class TokenScreen : MonoBehaviour
                     }
                 }
             }
-            else
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (selectedItem != null)
             {
                 if (inventorySlot != null && !inventorySlot.isUsed)
                 {
@@ -176,6 +184,7 @@ public class TokenScreen : MonoBehaviour
 
                     inventorySlot.currentToken = upgradeToken;
                     inventorySlot.isUsed = true;
+                    upgradeToken.MySlot = inventorySlot.slotType;
 
                     selectedItem = null;
                 }
@@ -206,11 +215,16 @@ public class TokenScreen : MonoBehaviour
 
     private void Update()
     {
-        HandleUIInteraction();
-
+        HandleUIInteraction();   
+        
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            upgradeCanvas.enabled = !upgradeCanvas.enabled;
+        }        
+        
         if (Input.GetKeyDown(KeyCode.G))
         {
-            CreateToken();
+            CreateToken("RapidFire");
         }
     }
 }

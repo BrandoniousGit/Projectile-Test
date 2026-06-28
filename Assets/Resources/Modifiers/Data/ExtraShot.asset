@@ -16,7 +16,7 @@ MonoBehaviour:
   ModifierName: Extra Shot
   InternalName: ExtraShot
   PrerequisiteModifier: 
-  Description: Enter a description.
+  Description: Your weapon shoots an extra time every {VALUE} shots
   MaxLevel: 3
   ProcChance: 0
   Rarity: 2

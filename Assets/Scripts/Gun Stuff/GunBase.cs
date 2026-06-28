@@ -98,7 +98,7 @@ public class GunBase : EnhanceableBase
                 case GunType.Single:
                 case GunType.BarrelSpin:
 
-                    ShootBullet(forward, weaponMuzzlePos.position, hitscanBouncesLeft: (int)WeaponStats.Bounces.Value - 1);
+                    ShootBullet(forward, CameraTransform.position, hitscanBouncesLeft: (int)WeaponStats.Bounces.Value - 1);
 
                     if (doShotDelay)
                     {
@@ -181,13 +181,13 @@ public class GunBase : EnhanceableBase
             {
                 WhatDidIHit(hit, data, forwardVector, hitscanBouncesLeft);
 
-                LineRenderer trail = Instantiate(BaseWeaponData.m_bulletTrail, origin, Quaternion.identity);
+                LineRenderer trail = Instantiate(BaseWeaponData.m_bulletTrail, weaponMuzzlePos.position, Quaternion.identity);
                 Vector3[] positions = new Vector3[] { trail.transform.position, hit.point };
                 trail.SetPositions(positions);
             }
             else //Bullet miss
             {
-                LineRenderer trail = Instantiate(BaseWeaponData.m_bulletTrail, origin, Quaternion.identity);
+                LineRenderer trail = Instantiate(BaseWeaponData.m_bulletTrail, weaponMuzzlePos.position, Quaternion.identity);
                 Vector3[] positions = new Vector3[] { trail.transform.position, CameraTransform.position + forwardVector * 100};
                 trail.SetPositions(positions);
 

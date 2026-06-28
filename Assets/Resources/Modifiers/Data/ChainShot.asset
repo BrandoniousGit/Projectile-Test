@@ -16,7 +16,10 @@ MonoBehaviour:
   ModifierName: Chain Shot
   InternalName: ChainShot
   PrerequisiteModifier: 
-  Description: Enter a description.
+  Description: 'Increases weapon damage by +{VALUE}% for each consecutive hit
+
+    Current
+    damage boost: +{EFFECT}%'
   MaxLevel: 1
   ProcChance: 0
   Rarity: 0

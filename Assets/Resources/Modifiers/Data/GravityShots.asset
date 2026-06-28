@@ -19,7 +19,7 @@ MonoBehaviour:
   Description: Enter a description.
   MaxLevel: 1
   ProcChance: 0
-  Rarity: 0
+  Rarity: 1
   ModifiesStat: 9
   ApplyType: 1
   ValuePerLevel:

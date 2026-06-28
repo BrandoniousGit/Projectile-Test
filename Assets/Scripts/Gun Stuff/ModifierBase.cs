@@ -2,9 +2,9 @@ using UnityEngine;
 
 public abstract class ModifierBase : MonoBehaviour
 {
+    public EnhanceableBase Enhanceable;
     public int ModifierLevel = 1;
     public string DisplayName;
-    public string FormattedDescription;
 
     public abstract ModifierData GetData();
 
@@ -12,7 +12,7 @@ public abstract class ModifierBase : MonoBehaviour
     protected virtual void OnActionPerformed() { return; }
     protected virtual void OnActiveAbilityPressed() { return; }
     protected virtual void OnSetData() { return; }
-    protected abstract string GetDescription();
+    public abstract string GetDescription();
     #endregion
 
     protected virtual void OnEnable()
