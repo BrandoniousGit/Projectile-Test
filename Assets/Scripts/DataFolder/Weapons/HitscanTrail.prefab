@@ -103,15 +103,15 @@ LineRenderer:
       - serializedVersion: 3
         time: 0.002571106
         value: 0.04022673
-        inSlope: 0.028812854
-        outSlope: 0.028812854
+        inSlope: 0.018398043
+        outSlope: 0.018398043
         tangentMode: 0
         weightedMode: 0
         inWeight: 0
-        outWeight: 0.9974293
+        outWeight: 0.99777204
       - serializedVersion: 3
         time: 1
-        value: 0.072175115
+        value: 0.057536207
         inSlope: 0.020503689
         outSlope: 0.020503689
         tangentMode: 0

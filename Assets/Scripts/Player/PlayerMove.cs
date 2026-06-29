@@ -6,12 +6,16 @@ public class LocalPlayerMove : MonoBehaviour
 {
     [SerializeField] private Camera cam;
     [SerializeField] private Rigidbody rb;
-    [SerializeField] private float moveSpeed, groundAccel, airSpeed, airAccel, airDecel, jumpForce, dashStrength, playerGravity, groundCheckDistance, sprintMoveSpeed, crouchMoveSpeed, slideMinSpeed;
+    [SerializeField] private float moveSpeed, groundAccel, airSpeed, airAccel, airDecel, jumpForce, dashStrength, playerGravity, groundCheckDistance, sprintMoveSpeed, crouchMoveSpeed, slideMinSpeed, maxSlopeAngle, slideGracePeriod;
     [SerializeField] private bool grounded, crouching, sprinting, dashUsed, doubleJumpUsed;
-    private bool canMove = true;
+    
+    private bool canMove = true, exitingSlope;
 
-    private float slowdownMulti, speed, groundedLerp;
-    public TextMeshProUGUI spedometer;
+    private float slowdownMulti, speed, groundedLerp, temporarySpeed, tempSpeedDecay;
+    private float slideTimer;
+    private RaycastHit slopeHit;
+
+    //public TextMeshProUGUI spedometer;
 
     public LayerMask groundMask;
 
@@ -45,12 +49,14 @@ public class LocalPlayerMove : MonoBehaviour
 
             Vector3 mag = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
 
+            // Dash movement
             if (!grounded && !dashUsed && Input.GetKeyDown(KeyCode.LeftShift))
             {
-                rb.linearVelocity = new Vector3(moveDir.x * dashStrength, rb.linearVelocity.y, moveDir.z * dashStrength);
+                rb.linearVelocity = new Vector3(moveDir.x * dashStrength, dashStrength / 3, moveDir.z * dashStrength);
                 dashUsed = true;
             }
 
+            // Air movement
             if (!grounded)
             {
                 Vector3 horizontalVel = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
@@ -89,27 +95,85 @@ public class LocalPlayerMove : MonoBehaviour
 
                 rb.linearVelocity = new Vector3(newVel.x, rb.linearVelocity.y, newVel.z);
             }
-            else if (!crouching || horizontalSpeed.magnitude < slideMinSpeed)
+
+            // Ground movement
+            else
             {
-                rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, new Vector3(moveDir.x * speed, rb.linearVelocity.y, moveDir.z * speed), groundAccel);
+                if (IsOnSlope())
+                {
+                    if (!crouching)
+                    {
+                        moveDir = GetSlopeMovementDirection(moveDir);
+
+                        rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, new Vector3(moveDir.x * speed, moveDir.y * speed, moveDir.z * speed), groundAccel);
+                    }
+                }
+                else
+                {
+                    if (crouching && rb.linearVelocity.magnitude > slideMinSpeed)
+                    {
+                        slideTimer -= 1 * Time.deltaTime;
+
+                        if (slideTimer <= 0)
+                        {
+                            rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, Vector3.zero, 0.005f);
+                        }
+                    }
+                    else
+                    {
+                        slideTimer -= 2 * Time.deltaTime;
+
+                        if (slideTimer <= 0)
+                        {
+                            rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, new Vector3(moveDir.x * speed, rb.linearVelocity.y, moveDir.z * speed), groundAccel);
+                        }
+                    }
+                }
             }
         }
-        else if (grounded && !crouching)
+        else if (grounded)
         {
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x * slowdownMulti, rb.linearVelocity.y, rb.linearVelocity.z * slowdownMulti);
+            if (IsOnSlope())
+            {
+                // Prevents the bump up when stopping on a ramp
+                if (rb.linearVelocity.y > 0 && !crouching && !exitingSlope)
+                {
+                    rb.AddForce(Vector3.down * 50f);
+                }
+
+                if (!crouching)
+                {
+                    SlowDownGroundMovement();
+                }
+            }
+            else
+            {
+                if (crouching && rb.linearVelocity.magnitude > slideMinSpeed)
+                {
+                    slideTimer -= 1 * Time.deltaTime;
+
+                    if (slideTimer <= 0)
+                    {
+                        rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, Vector3.zero, 0.005f);
+                    }
+                }
+                else
+                {
+                    SlowDownGroundMovement();
+                }
+            }
         }
-        else if (horizontalSpeed.magnitude < slideMinSpeed)
-        {
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x * slowdownMulti, rb.linearVelocity.y, rb.linearVelocity.z * slowdownMulti);
-        }
+    }
+
+    void SlowDownGroundMovement()
+    {
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x * slowdownMulti, rb.linearVelocity.y, rb.linearVelocity.z * slowdownMulti);
     }
 
     void CheckGrounded()
     {
-        RaycastHit hit;
-
         //Checks for if the player is on the ground so they can jump etc.
-        if (Physics.SphereCast(transform.position, 0.41f, Vector3.down, out hit, groundCheckDistance, groundMask) && rb.linearVelocity.y <= 0)
+        if (Physics.BoxCast(transform.position, new Vector3(0.3f, 0.3f, 0.3f), Vector3.down, Quaternion.identity, groundCheckDistance, groundMask, QueryTriggerInteraction.Ignore))
         {
             grounded = true;
             dashUsed = false;
@@ -121,13 +185,36 @@ public class LocalPlayerMove : MonoBehaviour
         }
     }
 
+    private bool IsOnSlope()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, 1.2f + 0.3f, groundMask, QueryTriggerInteraction.Ignore))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            return angle < maxSlopeAngle && angle != 0;
+        }
+
+        return false;
+    }
+
+    private Vector3 GetSlopeMovementDirection(Vector3 moveDir)
+    {
+        return Vector3.ProjectOnPlane(moveDir, slopeHit.normal).normalized;
+    }
+
     void Jumping()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            if (IsOnSlope())
+            {
+                exitingSlope = true;
+            }
+
             if (grounded)
             {
+                slideTimer = slideGracePeriod;
                 grounded = false;
+
                 if (rb.linearVelocity.y <= 0)
                 {
                     rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
@@ -143,6 +230,11 @@ public class LocalPlayerMove : MonoBehaviour
                 }
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
             }
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            exitingSlope = false;
         }
     }
 
@@ -206,13 +298,17 @@ public class LocalPlayerMove : MonoBehaviour
     {
         //spedometer.SetText($"{Math.Round(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude, 2)}"); 
 
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKeyDown(KeyCode.Z))
         {
             FreeMe();
         }
+
         if (cam == null || rb == null) return;
 
-        rb.linearVelocity += new Vector3(0, playerGravity * Time.deltaTime, 0);
+        if (!IsOnSlope() || crouching)
+        {
+            rb.linearVelocity += new Vector3(0, playerGravity * Time.deltaTime, 0);
+        }
 
         groundedLerp = Mathf.MoveTowards(groundedLerp, grounded ? 1f : 0f, Time.deltaTime * 5f);
 
@@ -239,19 +335,31 @@ public class LocalPlayerMove : MonoBehaviour
 
     void LateUpdate()
     {
+        float currentSpeed = 0;
+
         if (sprinting && !crouching && grounded)
         {
-            speed = sprintMoveSpeed;
+            currentSpeed = sprintMoveSpeed;
         }
 
         else if (!sprinting && crouching && grounded)
         {
-            speed = crouchMoveSpeed;
+            currentSpeed = crouchMoveSpeed;
         }
 
         else
         {
-            speed = moveSpeed;
+            currentSpeed = moveSpeed;
+        }
+
+        if (temporarySpeed > 1)
+        {
+            temporarySpeed -= tempSpeedDecay;
+            speed = currentSpeed * temporarySpeed;
+        }
+        else
+        {
+            speed = currentSpeed;
         }
 
         if (canMove)

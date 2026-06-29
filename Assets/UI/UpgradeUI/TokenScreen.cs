@@ -49,6 +49,7 @@ public class TokenScreen : MonoBehaviour
         upgradeCanvas.enabled = false;
     }
 
+
     private void CreateInventory(Vector2 bottomLeft, Vector2 gridSize, InventorySlotType slotType)
     {
         for (int i = 0; i < gridSize.x; i++)
@@ -155,12 +156,13 @@ public class TokenScreen : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonDown(0))
+        // If not holding a token
+        if (selectedItem == null)
         {
-            // If not holding a token
-            if (selectedItem == null)
+            //If hovering a token
+            if (upgradeToken != null)
             {
-                if (upgradeToken != null)
+                if (Input.GetMouseButtonDown(0))
                 {
                     selectedItem = upgradeToken.gameObject;
 
@@ -171,12 +173,13 @@ public class TokenScreen : MonoBehaviour
                         inventorySlot.isUsed = false;
                     }
                 }
+
+                Debug.Log("I should be showing my description");
             }
         }
-
-        if (Input.GetMouseButtonUp(0))
+        else
         {
-            if (selectedItem != null)
+            if (Input.GetMouseButtonUp(0))
             {
                 if (inventorySlot != null && !inventorySlot.isUsed)
                 {
@@ -186,15 +189,18 @@ public class TokenScreen : MonoBehaviour
                     inventorySlot.isUsed = true;
                     upgradeToken.MySlot = inventorySlot.slotType;
 
+                    selectedItem.transform.localScale = Vector3.one * TileSize;
+
                     selectedItem = null;
                 }
                 else if (inventorySlot == null)
                 {
-
                     selectedItem.transform.position = fallbackSlot.transform.position;
 
                     fallbackSlot.currentToken = upgradeToken;
                     fallbackSlot.isUsed = true;
+
+                    selectedItem.transform.localScale = Vector3.one * TileSize;
 
                     fallbackSlot = null;
                     selectedItem = null;
@@ -202,14 +208,10 @@ public class TokenScreen : MonoBehaviour
             }
         }
 
-        if (upgradeToken != null && selectedItem == null)
-        {
-            // Show Upgrade description
-        }
-
         if (selectedItem != null)
         {
-            selectedItem.transform.position = Input.mousePosition - new Vector3(selectedItem.transform.localScale.x / 2, selectedItem.transform.localScale.y / 2, 0);
+            selectedItem.transform.position = Vector3.Lerp(selectedItem.transform.position, Input.mousePosition - new Vector3(selectedItem.transform.lossyScale.x / 2, selectedItem.transform.lossyScale.y / 2, 0), 0.15f);
+            selectedItem.transform.localScale = Vector3.Lerp(selectedItem.transform.localScale, Vector3.one * TileSize * 1.25f, 0.1f);
         }
     }
 

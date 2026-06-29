@@ -98,7 +98,7 @@ public class GunBase : EnhanceableBase
                 case GunType.Single:
                 case GunType.BarrelSpin:
 
-                    ShootBullet(forward, CameraTransform.position, hitscanBouncesLeft: (int)WeaponStats.Bounces.Value - 1);
+                    ShootBullet(forward, weaponMuzzlePos.position, hitscanBouncesLeft: (int)WeaponStats.Bounces.Value - 1);
 
                     if (doShotDelay)
                     {
@@ -107,7 +107,7 @@ public class GunBase : EnhanceableBase
 
                     break;
                 case GunType.Burst:
-                    StartCoroutine("StartBurst", forward);
+                    StartCoroutine("StartBurst");
                     break;
             }
         }
@@ -181,13 +181,13 @@ public class GunBase : EnhanceableBase
             {
                 WhatDidIHit(hit, data, forwardVector, hitscanBouncesLeft);
 
-                LineRenderer trail = Instantiate(BaseWeaponData.m_bulletTrail, weaponMuzzlePos.position, Quaternion.identity);
+                LineRenderer trail = Instantiate(BaseWeaponData.m_bulletTrail, origin != null ? origin : weaponMuzzlePos.position, Quaternion.identity);
                 Vector3[] positions = new Vector3[] { trail.transform.position, hit.point };
                 trail.SetPositions(positions);
             }
             else //Bullet miss
             {
-                LineRenderer trail = Instantiate(BaseWeaponData.m_bulletTrail, weaponMuzzlePos.position, Quaternion.identity);
+                LineRenderer trail = Instantiate(BaseWeaponData.m_bulletTrail, origin != null ? origin : weaponMuzzlePos.position, Quaternion.identity);
                 Vector3[] positions = new Vector3[] { trail.transform.position, CameraTransform.position + forwardVector * 100};
                 trail.SetPositions(positions);
 
@@ -234,11 +234,13 @@ public class GunBase : EnhanceableBase
     #endregion
 
     #region coroutines
-    IEnumerator StartBurst(Vector3 forward)
+    IEnumerator StartBurst()
     {
         canShoot = false;
         for (int i = 0; i < BaseWeaponData.m_burstCount; i++)
         {
+            var forward = (CameraTransform.position + CameraTransform.forward * 100 - transform.position).normalized;
+
             ShootBullet(forward, weaponMuzzlePos.position, hitscanBouncesLeft: (int)WeaponStats.Bounces.Value);
             yield return new WaitForSeconds(BaseWeaponData.m_timeBetweenBurst);
         }
