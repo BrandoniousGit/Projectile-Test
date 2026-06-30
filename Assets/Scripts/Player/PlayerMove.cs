@@ -6,13 +6,12 @@ public class LocalPlayerMove : MonoBehaviour
 {
     [SerializeField] private Camera cam;
     [SerializeField] private Rigidbody rb;
-    [SerializeField] private float moveSpeed, groundAccel, airSpeed, airAccel, airDecel, jumpForce, dashStrength, playerGravity, groundCheckDistance, sprintMoveSpeed, crouchMoveSpeed, slideMinSpeed, maxSlopeAngle, slideGracePeriod;
+    [SerializeField] private float moveSpeed, groundAccel, airSpeed, airAccel, airDecel, jumpForce, dashStrength, playerGravity, groundCheckDistance, sprintMoveSpeed, crouchMoveSpeed, slideMinSpeed, maxSlopeAngle, slideGracePeriod, dashCooldown;
     [SerializeField] private bool grounded, crouching, sprinting, dashUsed, doubleJumpUsed;
-    
-    private bool canMove = true, exitingSlope;
 
-    private float slowdownMulti, speed, groundedLerp, temporarySpeed, tempSpeedDecay;
-    private float slideTimer;
+    private bool canMove = true;
+
+    private float slowdownMulti, speed, groundedLerp, temporarySpeed, tempSpeedDecay, slideTimer, groundedTimer, dashTimer;
     private RaycastHit slopeHit;
 
     //public TextMeshProUGUI spedometer;
@@ -50,13 +49,17 @@ public class LocalPlayerMove : MonoBehaviour
             Vector3 mag = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
 
             // Dash movement
-            if (!grounded && !dashUsed && Input.GetKeyDown(KeyCode.LeftShift))
+            if (!dashUsed && Input.GetKeyDown(KeyCode.LeftShift) && dashTimer < 0)
             {
-                rb.linearVelocity = new Vector3(moveDir.x * dashStrength, dashStrength / 3, moveDir.z * dashStrength);
+                groundedTimer = 0.2f;
+                dashTimer = dashCooldown;
+                grounded = false;
                 dashUsed = true;
+
+                rb.linearVelocity = new Vector3(moveDir.x * dashStrength, dashStrength / 2.5f, moveDir.z * dashStrength);
             }
 
-            // Air movement
+            // Air movement say your prayers if you're editing this
             if (!grounded)
             {
                 Vector3 horizontalVel = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
@@ -64,9 +67,9 @@ public class LocalPlayerMove : MonoBehaviour
 
                 float angle = Vector3.Angle(horizontalVel, moveDir);
 
-                if (angle > 60 && currentMag > airSpeed)
+                if (angle > 75 && currentMag > airSpeed)
                 {
-                    float t = Mathf.InverseLerp(60f, 180f, angle);
+                    float t = Mathf.InverseLerp(75f, 180f, angle);
                     float penalty = Mathf.Lerp(1f, slowdownMulti, t);
                     float targetSpeed = currentMag * penalty;
                     float decel = airDecel;
@@ -121,12 +124,7 @@ public class LocalPlayerMove : MonoBehaviour
                     }
                     else
                     {
-                        slideTimer -= 2 * Time.deltaTime;
-
-                        if (slideTimer <= 0)
-                        {
-                            rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, new Vector3(moveDir.x * speed, rb.linearVelocity.y, moveDir.z * speed), groundAccel);
-                        }
+                        rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, new Vector3(moveDir.x * speed, rb.linearVelocity.y, moveDir.z * speed), groundAccel);
                     }
                 }
             }
@@ -136,7 +134,7 @@ public class LocalPlayerMove : MonoBehaviour
             if (IsOnSlope())
             {
                 // Prevents the bump up when stopping on a ramp
-                if (rb.linearVelocity.y > 0 && !crouching && !exitingSlope)
+                if (rb.linearVelocity.y > 0 && !crouching)
                 {
                     rb.AddForce(Vector3.down * 50f);
                 }
@@ -173,7 +171,7 @@ public class LocalPlayerMove : MonoBehaviour
     void CheckGrounded()
     {
         //Checks for if the player is on the ground so they can jump etc.
-        if (Physics.BoxCast(transform.position, new Vector3(0.3f, 0.3f, 0.3f), Vector3.down, Quaternion.identity, groundCheckDistance, groundMask, QueryTriggerInteraction.Ignore))
+        if (Physics.BoxCast(transform.position, new Vector3(0.3f, 0.3f, 0.3f), Vector3.down, Quaternion.identity, groundCheckDistance, groundMask, QueryTriggerInteraction.Ignore) && groundedTimer < 0)
         {
             grounded = true;
             dashUsed = false;
@@ -181,6 +179,11 @@ public class LocalPlayerMove : MonoBehaviour
         }
         else
         {
+            if (groundedTimer >= 0)
+            {
+                groundedTimer -= Time.deltaTime;
+            }
+
             grounded = false;
         }
     }
@@ -201,18 +204,19 @@ public class LocalPlayerMove : MonoBehaviour
         return Vector3.ProjectOnPlane(moveDir, slopeHit.normal).normalized;
     }
 
-    void Jumping()
+    void Jump()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (IsOnSlope())
-            {
-                exitingSlope = true;
-            }
-
             if (grounded)
             {
+                if (slideTimer > 0 && crouching)
+                {
+                    rb.linearVelocity *= 1.1f;
+                }
+
                 slideTimer = slideGracePeriod;
+                groundedTimer = 0.2f;
                 grounded = false;
 
                 if (rb.linearVelocity.y <= 0)
@@ -230,11 +234,6 @@ public class LocalPlayerMove : MonoBehaviour
                 }
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
             }
-        }
-
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            exitingSlope = false;
         }
     }
 
@@ -259,14 +258,7 @@ public class LocalPlayerMove : MonoBehaviour
 
         if (crouching)
         {
-            if (!grounded)
-            {
-                cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, new Vector3(cam.transform.localPosition.x, 0.7f, cam.transform.localPosition.z), 0.045f);
-            }
-            else
-            {
-                cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, new Vector3(cam.transform.localPosition.x, 0, cam.transform.localPosition.z), 0.045f);
-            }
+            cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, new Vector3(cam.transform.localPosition.x, 0, cam.transform.localPosition.z), 0.045f);
         }
         else
         {
@@ -310,6 +302,11 @@ public class LocalPlayerMove : MonoBehaviour
             rb.linearVelocity += new Vector3(0, playerGravity * Time.deltaTime, 0);
         }
 
+        if (dashTimer >= 0)
+        {
+            dashTimer -= Time.deltaTime;
+        }
+
         groundedLerp = Mathf.MoveTowards(groundedLerp, grounded ? 1f : 0f, Time.deltaTime * 5f);
 
         float airSlowdown = Mathf.Pow(0.98f, Time.deltaTime / 0.0069f);
@@ -320,7 +317,7 @@ public class LocalPlayerMove : MonoBehaviour
 
         if (canMove)
         {
-            Jumping();
+            Jump();
             Crouching();
             Sprinting();
         }

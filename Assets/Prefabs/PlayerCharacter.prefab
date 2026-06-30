@@ -838,26 +838,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 3745227225981233547}
   rb: {fileID: 0}
-  moveSpeed: 9
+  moveSpeed: 8
   groundAccel: 0.1
-  airSpeed: 9
+  airSpeed: 8
   airAccel: 30
   airDecel: 40
   jumpForce: 12
-  dashStrength: 21
+  dashStrength: 16
   playerGravity: -23.5
   groundCheckDistance: 1.1
   sprintMoveSpeed: 9
   crouchMoveSpeed: 2.5
   slideMinSpeed: 2.5
-  maxSlopeAngle: 45
+  maxSlopeAngle: 65
   slideGracePeriod: 0.25
+  dashCooldown: 2
   grounded: 1
   crouching: 0
   sprinting: 0
   dashUsed: 0
   doubleJumpUsed: 0
-  spedometer: {fileID: 0}
+  slideTimer: 0
+  groundedTimer: 0
+  dashTimer: 0
   groundMask:
     serializedVersion: 2
     m_Bits: 1
