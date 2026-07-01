@@ -111,7 +111,8 @@ public static class Globals
     public enum EnemyState
     {
         Idle,
-        Aggressive
+        Chasing,
+        Attacking
     }
 
     public enum ObjectiveType

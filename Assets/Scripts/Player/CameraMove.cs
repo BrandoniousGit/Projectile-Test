@@ -20,22 +20,18 @@ public class CameraMove : MonoBehaviour
     private float zoom = 30;
     private float zoomMin = 20;
 
-    private void Start()
+    private void Awake()
     {
-        FreeMe();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void Update()
     {
-        if (isLocked)
+        if (!isLocked)
         {
             UserInput();
             Zoom();
-        }
-
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            FreeMe();
         }
 
         UserInteract();
@@ -43,7 +39,7 @@ public class CameraMove : MonoBehaviour
 
     void UserInteract()
     {
-        if (!isLocked)
+        if (isLocked)
         {
             return;
         }
@@ -123,11 +119,11 @@ public class CameraMove : MonoBehaviour
         Camera.main.transform.localRotation = Quaternion.Euler(y, 0, 0);
     }
 
-    public void FreeMe()
+    public void ToggleFreeze(bool isFrozen)
     {
-        isLocked = !isLocked;
+        isLocked = isFrozen;
 
-        if (isLocked)
+        if (!isLocked)
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;

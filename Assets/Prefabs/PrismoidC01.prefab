@@ -522,12 +522,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0beba4151c01e534782d42896076b568, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 4022603866314320329}
-  MaxHealth: 5
-  Health: 0
-  DetectionRange: -1
+  maxHealth: 10
+  health: 0
+  detectionRange: -1
+  attackRange: -1
+  attackCooldown: 0
   ShouldLookAtPlayer: 0
-  CurrentState: 0
+  Agent: {fileID: 0}
+  currentState: 0
+  layermask:
+    serializedVersion: 2
+    m_Bits: 0
   HealthBar: {fileID: 0}
   WhiteBar: {fileID: 0}
   HomeRange: 5

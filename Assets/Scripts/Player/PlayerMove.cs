@@ -1,15 +1,13 @@
-using System;
-using TMPro;
 using UnityEngine;
 
-public class LocalPlayerMove : MonoBehaviour
+public class PlayerMove : MonoBehaviour
 {
     [SerializeField] private Camera cam;
     [SerializeField] private Rigidbody rb;
     [SerializeField] private float moveSpeed, groundAccel, airSpeed, airAccel, airDecel, jumpForce, dashStrength, playerGravity, groundCheckDistance, sprintMoveSpeed, crouchMoveSpeed, slideMinSpeed, maxSlopeAngle, slideGracePeriod, dashCooldown;
     [SerializeField] private bool grounded, crouching, sprinting, dashUsed, doubleJumpUsed;
 
-    private bool canMove = true;
+    private bool isFrozen = false;
 
     private float slowdownMulti, speed, groundedLerp, temporarySpeed, tempSpeedDecay, slideTimer, groundedTimer, dashTimer;
     private RaycastHit slopeHit;
@@ -258,7 +256,14 @@ public class LocalPlayerMove : MonoBehaviour
 
         if (crouching)
         {
-            cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, new Vector3(cam.transform.localPosition.x, 0, cam.transform.localPosition.z), 0.045f);
+            if (!grounded)
+            {
+                cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, new Vector3(cam.transform.localPosition.x, 0.7f, cam.transform.localPosition.z), 0.045f);
+            }
+            else
+            {
+                cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, new Vector3(cam.transform.localPosition.x, 0, cam.transform.localPosition.z), 0.045f);
+            }
         }
         else
         {
@@ -290,14 +295,9 @@ public class LocalPlayerMove : MonoBehaviour
     {
         //spedometer.SetText($"{Math.Round(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude, 2)}"); 
 
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            FreeMe();
-        }
-
         if (cam == null || rb == null) return;
 
-        if (!IsOnSlope() || crouching)
+        if (!IsOnSlope() || crouching || !PlayerManager.Instance.IsAlive)
         {
             rb.linearVelocity += new Vector3(0, playerGravity * Time.deltaTime, 0);
         }
@@ -315,7 +315,7 @@ public class LocalPlayerMove : MonoBehaviour
 
         slowdownMulti = Mathf.Lerp(airSlowdown, groundSlowdown, groundedLerp);
 
-        if (canMove)
+        if (!isFrozen)
         {
             Jump();
             Crouching();
@@ -325,9 +325,15 @@ public class LocalPlayerMove : MonoBehaviour
         CheckGrounded();
     }
 
-    public void FreeMe()
+    public void ToggleFreeze(bool isFrozen)
     {
-        canMove = !canMove;
+        this.isFrozen = isFrozen;
+        
+        if (!PlayerManager.Instance.IsAlive)
+        {
+            GetComponent<MeshCollider>().material = null;
+            rb.AddRelativeTorque(new Vector3(Random.Range(25, 50), Random.Range(25, 50), Random.Range(25, 50)));
+        }
     }
 
     void LateUpdate()
@@ -359,11 +365,11 @@ public class LocalPlayerMove : MonoBehaviour
             speed = currentSpeed;
         }
 
-        if (canMove)
+        if (!isFrozen)
         {
             UserInput();
         }
-        else
+        else if (PlayerManager.Instance.IsAlive)
         {
             rb.linearVelocity = new Vector3(rb.linearVelocity.x * slowdownMulti, rb.linearVelocity.y, rb.linearVelocity.z * slowdownMulti);
         }

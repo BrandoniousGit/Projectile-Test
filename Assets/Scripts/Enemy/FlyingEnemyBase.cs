@@ -13,7 +13,15 @@ public class FlyingEnemyBase : EnemyBase
 
     public LayerMask LayerMask;
 
+    private Rigidbody rb;
     private float IdleMoveTimer;
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+
+        rb = GetComponentInChildren<Rigidbody>();
+    }
 
     protected override void Update()
     {
@@ -40,7 +48,7 @@ public class FlyingEnemyBase : EnemyBase
                 rb.linearVelocity = (TargetPosition.Value - rb.transform.position).normalized * Speed;
             }
         }
-        else if (CurrentState == EnemyState.Idle)
+        else if (currentState == EnemyState.Idle)
         {
             IdleMoveTimer += Time.deltaTime;
         }

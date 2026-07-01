@@ -1,3 +1,4 @@
+using DamageNumbersPro;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +10,8 @@ public class BulletBase : MonoBehaviour
 {
     public float deathTimer;
     public LayerMask collisionMask;
-    private Team Team;
+    public Team Team;
+    public DamageNumber numberPrefab;
 
     private BulletData Data;
     private Rigidbody rb;
@@ -24,6 +26,15 @@ public class BulletBase : MonoBehaviour
     #region setup
     private void OnEnable()
     {
+        if (Team == Team.Player)
+        {
+            gameObject.layer = LayerMask.NameToLayer("Bullet");
+        }
+        else if (Team == Team.Enemy)
+        {
+            gameObject.layer = LayerMask.NameToLayer("EnemyBullet");
+        }
+
         StartCoroutine("DestroyAfter", deathTimer);
         rb = GetComponent<Rigidbody>();
 
@@ -54,7 +65,16 @@ public class BulletBase : MonoBehaviour
     #region private methods
     private void Update()
     {
-        if (Data.UseGravity)
+        if (Team == Team.Player)
+        {
+            gameObject.layer = LayerMask.NameToLayer("Bullet");
+        }
+        else if (Team == Team.Enemy)
+        {
+            gameObject.layer = LayerMask.NameToLayer("EnemyBullet");
+        }
+
+        if (Data != null && Data.UseGravity)
         {
             rb.linearVelocity += new Vector3(0, Data.Gravity * Time.deltaTime, 0);
             transform.forward = rb.linearVelocity.normalized;
@@ -110,33 +130,32 @@ public class BulletBase : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (Data != null)
+        if (collision.transform.root.TryGetComponent<IDamageable>(out var damageable))
         {
-            if (collision.gameObject.tag == "Enemy")
+            damageable.ReceiveDamage(Data.Damage);
+
+            if (numberPrefab != null && damageable.IsAlive && collision.transform.tag != "Player")
             {
-                if (collision.gameObject.TryGetComponent<IDamageable>(out var damageable))
-                {
-                    damageable.ReceiveDamage(Data.Damage);
-
-                    Destroy(gameObject);
-
-                    DidShotHitSomething?.Invoke(true);
-                }
+                DamageNumber damageNumber = numberPrefab.Spawn(collision.transform.position, Data.Damage);
             }
-            else if (bounces > 0)
-            {
-                var hitNormal = collision.GetContact(0).normal;
 
-                rb.linearVelocity = Vector3.Reflect(currentLinearVelocity, hitNormal);
-                transform.forward = rb.linearVelocity.normalized;
+            Destroy(gameObject);
 
-                bounces--;
-            }
-            else
-            {
-                Destroy(gameObject);
-                DidShotHitSomething?.Invoke(false);
-            }
+            DidShotHitSomething?.Invoke(true);
+        }
+        else if (bounces > 0)
+        {
+            var hitNormal = collision.GetContact(0).normal;
+
+            rb.linearVelocity = Vector3.Reflect(currentLinearVelocity, hitNormal);
+            transform.forward = rb.linearVelocity.normalized;
+
+            bounces--;
+        }
+        else
+        {
+            Destroy(gameObject);
+            DidShotHitSomething?.Invoke(false);
         }
     }
     #endregion

@@ -1,14 +1,14 @@
-using System;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
-using static Globals;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : MonoBehaviour, IDamageable
 {
     public static PlayerManager Instance { get; private set; }
+    public bool IsAlive { get; set; }
 
-    private GameObject PlayerInstance;
+    public PhysicsMaterial noFricc;
+
+    private PlayerMove PlayerInstance;
     private float timer;
 
     public Image healthBar, whiteBar;
@@ -22,21 +22,19 @@ public class PlayerManager : MonoBehaviour
             DontDestroyOnLoad(this);
         Instance = this;
 
-        if (PlayerInstance == null) PlayerInstance = GameObject.FindGameObjectWithTag("Player");
+        if (PlayerInstance == null) PlayerInstance = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMove>();
 
+        IsAlive = true;
         health = maxHealth;
     }
 
-    public void SetPlayerFrozen()
+    public void SetPlayerFrozen(bool isFrozen)
     {
-        if (PlayerInstance.TryGetComponent<LocalPlayerMove>(out var instance))
-        {
-            instance.FreeMe();
-        }        
+        PlayerInstance.ToggleFreeze(isFrozen);
         
         if (PlayerInstance.TryGetComponent<CameraMove>(out var camInstance))
         {
-            camInstance.FreeMe();
+            camInstance.ToggleFreeze(isFrozen);
         }
     }
 
@@ -50,10 +48,24 @@ public class PlayerManager : MonoBehaviour
         PlayerInstance.transform.position = pos;
     }
 
-    public void RecieveDamage(float damage)
+    public void ReceiveDamage(float damage)
     {
         health -= damage;
         timer = 0.4f;
+    }
+
+    private void RespawnPlayer()
+    {
+        if (!IsAlive)
+        {
+            PlayerInstance.GetComponent<Rigidbody>().freezeRotation = true;
+            PlayerInstance.GetComponent<MeshCollider>().material = noFricc;
+
+            health = maxHealth;
+            IsAlive = true;
+
+            SetPlayerFrozen(false);
+        }
     }
 
     private void UpdateHealthBar()
@@ -75,11 +87,26 @@ public class PlayerManager : MonoBehaviour
             whiteBar.fillAmount = Mathf.Lerp(whiteBar.fillAmount, health / maxHealth, 0.1f);
         }
 
+        if (health <= 0 && IsAlive)
+        {
+            IsAlive = false;
+            //Run death anim
+
+            var playerRb = PlayerInstance.GetComponent<Rigidbody>();
+            playerRb.freezeRotation = false;
+            SetPlayerFrozen(true);
+        }
+
         health = Mathf.Clamp(health, 0, maxHealth);
     }
 
     void Update()
     {
         UpdateHealthBar();
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            RespawnPlayer();
+        }
     }
 }

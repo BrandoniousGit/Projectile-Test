@@ -153,3 +153,6 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 129
+  Team: 1
+  bulletDamage: 15
+  numberPrefab: {fileID: 7631150634818028903, guid: b475db9002d3a7748a349b43964e1614, type: 3}

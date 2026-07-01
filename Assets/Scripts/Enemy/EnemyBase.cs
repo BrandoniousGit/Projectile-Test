@@ -1,50 +1,54 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 using static Globals;
 
 public class EnemyBase : MonoBehaviour, IDamageable
 {
     public bool IsAlive { get; set; }
-    public Rigidbody rb;
 
-    public float MaxHealth;
-    public float Health;
+    public float maxHealth;
+    public float health;
 
-    public float DetectionRange = -1;
+    public float detectionRange = -1;
+    public float attackRange = -1;
+    public float attackCooldown;
     public bool ShouldLookAtPlayer;
 
+    public NavMeshAgent Agent;
+
     private float timer;
-    private GameObject EnemyBullet;
-    public EnemyState CurrentState;
+    public EnemyState currentState;
+    public LayerMask layermask;
 
     public Image HealthBar;
     public Image WhiteBar;
 
     public void ReceiveDamage(float damage)
     {
-        Health -= damage;
+        health -= damage;
         timer = 0.4f;
     }
 
     protected virtual void OnEnable()
     {
-        Health = MaxHealth;
+        health = maxHealth;
         IsAlive = true;
-        //EnemyBullet = (GameObject)Resources.Load("EnemyBullet");
+        Agent = GetComponent<NavMeshAgent>();
     }
 
     protected virtual void Update()
     {
         if (ShouldLookAtPlayer)
         {
-            TryLookAtPlayer();
+            TryLookAtPlayer(out _);
         }
 
         if (HealthBar != null && WhiteBar != null)
         {
-            HealthBar.fillAmount = Health / MaxHealth;
+            HealthBar.fillAmount = health / maxHealth;
 
             if (timer > 0)
             {
@@ -53,13 +57,13 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
             if (timer <= 0)
             {
-                WhiteBar.fillAmount = Mathf.Lerp(WhiteBar.fillAmount, Health / MaxHealth, 0.1f);
+                WhiteBar.fillAmount = Mathf.Lerp(WhiteBar.fillAmount, health / maxHealth, 0.1f);
             }
         }
 
-        Health = Mathf.Clamp(Health, 0, MaxHealth);
+        health = Mathf.Clamp(health, 0, maxHealth);
 
-        if (Health <= 0 && IsAlive)
+        if (health <= 0 && IsAlive)
         {
             IsAlive = false;
             StartCoroutine("CleanUpAfter", 5.0f);
@@ -74,22 +78,25 @@ public class EnemyBase : MonoBehaviour, IDamageable
         }
     }
 
-    //protected virtual void ShootHitscan(Vector3 startPos, Vector3 dir, )
-    //{
-
-    //}
-
-    private void TryLookAtPlayer()
+    public void TryLookAtPlayer(out RaycastHit hitInfo)
     {
         var playerPos = PlayerManager.Instance.GetPlayerPosition();
-        LayerMask mask = LayerMask.GetMask("Player");
 
-        Debug.DrawRay(transform.position, playerPos - transform.position, Color.red, Time.deltaTime);
-
-        if (Physics.Raycast(transform.position, playerPos - transform.position, Mathf.Infinity, mask, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(transform.position, playerPos - transform.position, out hitInfo, detectionRange, layermask, QueryTriggerInteraction.Ignore))
         {
-            var targetPos = new Vector3(playerPos.x, transform.position.y, playerPos.z);
-            transform.LookAt(targetPos);
+            if (hitInfo.collider.gameObject.tag == "Player")
+            {
+                var targetPos = new Vector3(playerPos.x, transform.position.y, playerPos.z);
+                // TODO: Slow look
+                transform.LookAt(targetPos);
+
+                if (hitInfo.distance < attackRange) currentState = EnemyState.Attacking;
+                else currentState = EnemyState.Chasing;
+            }
+        }
+        else
+        {
+            currentState = EnemyState.Idle;
         }
     }
 

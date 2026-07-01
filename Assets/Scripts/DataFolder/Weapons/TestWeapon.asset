@@ -15,7 +15,7 @@ MonoBehaviour:
   m_model: {fileID: 0}
   m_gunType: 0
   m_fullAuto: 1
-  m_isHitscan: 1
+  m_isHitscan: 0
   m_gunName: Test
   m_gunDescription: Test
   m_clipSize: 0
@@ -23,7 +23,7 @@ MonoBehaviour:
   m_chargeTime: 0
   m_shotsUntilFullSpeed: 10
   m_baseDamage: 1.2
-  m_bulletSpeed: 40
+  m_bulletSpeed: 108.21
   m_bulletSize: 1
   m_reloadTime: 0
   m_fireRate: 3

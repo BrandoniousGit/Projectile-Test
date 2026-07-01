@@ -658,6 +658,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da047a083bc09834d8fe6ec7c5685635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  noFricc: {fileID: 13400000, guid: 0d45db0985bf76e40945cc879db14b71, type: 2}
   healthBar: {fileID: 7086254415625650707}
   whiteBar: {fileID: 8185425252136693451}
   maxHealth: 15
@@ -858,9 +859,6 @@ MonoBehaviour:
   sprinting: 0
   dashUsed: 0
   doubleJumpUsed: 0
-  slideTimer: 0
-  groundedTimer: 0
-  dashTimer: 0
   groundMask:
     serializedVersion: 2
     m_Bits: 1
@@ -975,7 +973,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4697795258120618252
 RectTransform:
   m_ObjectHideFlags: 0
