@@ -1,7 +1,5 @@
-using DamageNumbersPro;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static Globals;
@@ -11,7 +9,6 @@ public class BulletBase : MonoBehaviour
     public float deathTimer;
     public LayerMask collisionMask;
     public Team Team;
-    public DamageNumber numberPrefab;
 
     private BulletData Data;
     private Rigidbody rb;
@@ -19,9 +16,12 @@ public class BulletBase : MonoBehaviour
     private float homingRange;
     private int bounces;
     private GameObject closestEnemy;
+    private bool initialized;
 
     public static event Action<BulletBase> UpdateBulletBase;
     public static event Action<bool> DidShotHitSomething;
+
+    private Vector3 previousPosition;
 
     #region setup
     private void OnEnable()
@@ -43,12 +43,14 @@ public class BulletBase : MonoBehaviour
     #endregion
 
     #region public methods
-    public void SetData(BulletData data)
+    public void Init(BulletData data)
     {
         Data = data;
         bounces = (int)Data.Bounces - 1;
 
         rb.linearVelocity = Data.BulletSpeed * transform.forward;
+
+        initialized = true;
     }    
     
     public void ModifyHoming(float homingRange)
@@ -65,6 +67,11 @@ public class BulletBase : MonoBehaviour
     #region private methods
     private void Update()
     {
+        if (!initialized)
+        {
+            return;
+        }
+
         if (Team == Team.Player)
         {
             gameObject.layer = LayerMask.NameToLayer("Bullet");
@@ -86,6 +93,41 @@ public class BulletBase : MonoBehaviour
         }
 
         currentLinearVelocity = rb.linearVelocity;
+    }
+
+    void FixedUpdate()
+    {
+        Vector3 currentPosition = transform.position;
+        Vector3 delta = currentPosition - previousPosition;
+
+        if (Physics.Raycast(previousPosition, delta.normalized, out RaycastHit hit, delta.magnitude, collisionMask))
+        {
+            if (hit.transform.TryGetComponent<IDamageable>(out var damageable) || hit.transform.root.TryGetComponent<IDamageable>(out damageable))
+            {
+                damageable.ReceiveDamage(Data.Damage);
+
+                Destroy(gameObject);
+
+                DidShotHitSomething?.Invoke(true);
+            }
+            else if (bounces > 0)
+            {
+                var hitNormal = hit.normal;
+
+                rb.linearVelocity = Vector3.Reflect(currentLinearVelocity, hitNormal);
+                transform.forward = rb.linearVelocity.normalized;
+                transform.position = hit.point;
+
+                bounces--;
+            }
+            else
+            {
+                Destroy(gameObject);
+                DidShotHitSomething?.Invoke(false);
+            }
+        }
+
+        previousPosition = currentPosition;
     }
 
     private void Homing()
@@ -125,37 +167,6 @@ public class BulletBase : MonoBehaviour
                 closestEnemy = collider.gameObject;
                 currentClosestDistance = distanceToEnemy;
             }
-        }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.transform.root.TryGetComponent<IDamageable>(out var damageable))
-        {
-            damageable.ReceiveDamage(Data.Damage);
-
-            if (numberPrefab != null && damageable.IsAlive && collision.transform.tag != "Player")
-            {
-                DamageNumber damageNumber = numberPrefab.Spawn(collision.transform.position, Data.Damage);
-            }
-
-            Destroy(gameObject);
-
-            DidShotHitSomething?.Invoke(true);
-        }
-        else if (bounces > 0)
-        {
-            var hitNormal = collision.GetContact(0).normal;
-
-            rb.linearVelocity = Vector3.Reflect(currentLinearVelocity, hitNormal);
-            transform.forward = rb.linearVelocity.normalized;
-
-            bounces--;
-        }
-        else
-        {
-            Destroy(gameObject);
-            DidShotHitSomething?.Invoke(false);
         }
     }
     #endregion

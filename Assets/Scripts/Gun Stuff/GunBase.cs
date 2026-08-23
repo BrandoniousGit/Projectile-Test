@@ -44,7 +44,7 @@ public class GunBase : EnhanceableBase
     {
         base.Update();
 
-        if (canShoot)
+        if (canShoot && !PlayerManager.Instance.GetPlayerFrozen())
         {
             if (BaseWeaponData.m_fullAuto)
             {
@@ -163,7 +163,7 @@ public class GunBase : EnhanceableBase
             var bulletObj = Instantiate(BulletGO, origin, Quaternion.LookRotation(forwardVector), null);
             bulletObj.transform.localScale *= BaseWeaponData.m_bulletSize;
             var bulletBase = bulletObj.GetComponent<BulletBase>();
-            bulletBase.SetData(data);
+            bulletBase.Init(data);
         }
 
         //Hitscan shots

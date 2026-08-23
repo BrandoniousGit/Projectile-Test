@@ -335,8 +335,8 @@ MonoBehaviour:
   combinationSettings:
     method: 0
     maxDistance: 10
-    spawnDelay: 0.2
-    absorbDuration: 0.4
+    spawnDelay: 0
+    absorbDuration: 0
     scaleCurve:
       serializedVersion: 2
       m_Curve:
@@ -678,7 +678,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5773077712978126871
 RectTransform:
   m_ObjectHideFlags: 0

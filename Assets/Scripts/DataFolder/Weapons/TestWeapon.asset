@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TestWeapon
   m_EditorClassIdentifier: 
   m_model: {fileID: 0}
-  m_gunType: 0
+  m_gunType: 1
   m_fullAuto: 1
   m_isHitscan: 0
   m_gunName: Test
@@ -23,11 +23,11 @@ MonoBehaviour:
   m_chargeTime: 0
   m_shotsUntilFullSpeed: 10
   m_baseDamage: 1.2
-  m_bulletSpeed: 108.21
+  m_bulletSpeed: 50
   m_bulletSize: 1
   m_reloadTime: 0
-  m_fireRate: 3
-  m_aimSpread: 1
+  m_fireRate: 6
+  m_aimSpread: 0
   m_damageFalloff: {x: 0, y: 0}
   m_shotSpeedRampRange: {x: 2, y: 5}
   m_bulletTrail: {fileID: 3947421414792267646, guid: f58b3e2b312de7840b6d3aee8946a9a1, type: 3}

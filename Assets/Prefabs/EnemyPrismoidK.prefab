@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 2591962194160510813}
   - component: {fileID: 7280373380217101875}
   - component: {fileID: 5218453317758073595}
+  - component: {fileID: 3248119344206052662}
   m_Layer: 7
   m_Name: LArm
   m_TagString: Enemy
@@ -148,7 +149,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!64 &5218453317758073595
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -171,6 +172,21 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -1767455476162773717, guid: 930428d79ebf0834ea50d06cd55672ea, type: 3}
+--- !u!114 &3248119344206052662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2210162025439261497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aca783b800edb7345a7b997e39c2181a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  limbType: 2
+  limbHealth: 0
+  limbMaxHealth: 0
 --- !u!1 &4931005429039602579
 GameObject:
   m_ObjectHideFlags: 0
@@ -184,6 +200,7 @@ GameObject:
   - component: {fileID: 2437779090473387456}
   - component: {fileID: 659872190738490928}
   - component: {fileID: 7109385240625393957}
+  - component: {fileID: 8964332477018845553}
   m_Layer: 7
   m_Name: PrismoidK
   m_TagString: Enemy
@@ -286,7 +303,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!64 &7109385240625393957
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -309,6 +326,21 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -8261031543420430035, guid: 930428d79ebf0834ea50d06cd55672ea, type: 3}
+--- !u!114 &8964332477018845553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4931005429039602579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aca783b800edb7345a7b997e39c2181a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  limbType: 1
+  limbHealth: 0
+  limbMaxHealth: 0
 --- !u!1 &5021651013275517853
 GameObject:
   m_ObjectHideFlags: 0
@@ -464,12 +496,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dddf97bffaa25e64c9c35a1eb9ed7cf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 6
+  maxHealth: 100
   health: 0
   detectionRange: 45
   attackRange: 20
   attackCooldown: 3
-  ShouldLookAtPlayer: 1
+  isBlind: 0
+  numberPrefab: {fileID: 7631150634818028903, guid: b475db9002d3a7748a349b43964e1614, type: 3}
+  headMulti: 1
+  armorMulti: 1
+  limbMulti: 5
   Agent: {fileID: 0}
   currentState: 0
   layermask:
@@ -514,6 +550,7 @@ GameObject:
   - component: {fileID: 7941043172150545916}
   - component: {fileID: 675688690732074659}
   - component: {fileID: 695919804967741252}
+  - component: {fileID: 6939682778104972303}
   m_Layer: 7
   m_Name: RArm
   m_TagString: Enemy
@@ -615,7 +652,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!64 &695919804967741252
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -638,3 +675,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 1913026353010570263, guid: 930428d79ebf0834ea50d06cd55672ea, type: 3}
+--- !u!114 &6939682778104972303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8386043319248130062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aca783b800edb7345a7b997e39c2181a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  limbType: 2
+  limbHealth: 0
+  limbMaxHealth: 0

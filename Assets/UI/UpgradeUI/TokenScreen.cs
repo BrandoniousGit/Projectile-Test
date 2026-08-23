@@ -12,20 +12,19 @@ public class TokenScreen : MonoBehaviour
     private GraphicRaycaster graphicRaycaster;
     private EventSystem eventSystem;
     private GameObject selectedItem;
-    private InventorySlot fallbackSlot;
-    private List<InventorySlot> inventorySlots = new();
+    private UpgradeStorageSlot fallbackSlot;
+    private List<UpgradeStorageSlot> inventorySlots = new();
+    private GameObject UpgradeSlotPrefab;
+    private GameObject UpgradeTokenPrefab;
 
     public EnhanceableBase Enhanceable;
-
-    public GameObject InventorySlot;
-    public GameObject UpgradeToken;
     public Sprite BackgroundTile;
 
     public Vector2 GridSize;
     public float TileSize;
     public List<string> UpgradePool;
 
-    public enum InventorySlotType
+    public enum UpgradeSlotType
     { 
         Upgrade,
         Storage
@@ -37,20 +36,19 @@ public class TokenScreen : MonoBehaviour
         FileInfo[] info = dir.GetFiles("*.asset");
         UpgradePool = info.Select(file => file.Name.RemoveFileExtension(6)).ToList();
 
-        upgradeCanvas = GetComponent<Canvas>();
-        graphicRaycaster = GetComponent<GraphicRaycaster>();
+        UpgradeTokenPrefab = (GameObject)Resources.Load("UpgradeToken");
+        UpgradeSlotPrefab = (GameObject)Resources.Load("UpgradeSlot");
+
+        upgradeCanvas = transform.root.GetComponent<Canvas>();
+        graphicRaycaster = transform.root.GetComponent<GraphicRaycaster>();
         eventSystem = GameObject.FindGameObjectWithTag("EventSystem").GetComponent<EventSystem>();
 
         Vector2 screenCenter = upgradeCanvas.GetComponent<RectTransform>().sizeDelta / 2;
 
-        CreateInventory(new Vector2(screenCenter.x - (TileSize - 0.5f) * 1.5f, screenCenter.y - (TileSize - 1) * 1.5f), new Vector2(3, 3), InventorySlotType.Upgrade);
-        CreateInventory(new Vector2(screenCenter.x - (TileSize - 0.5f) * 4.5f, 0), new Vector2(9, 2), InventorySlotType.Storage);
-
-        upgradeCanvas.enabled = false;
+        CreateInventory(new Vector2(screenCenter.x - (TileSize - 0.5f) * 1.5f, screenCenter.y - (TileSize - 1) * 1.5f), new Vector2(GridSize.x, GridSize.y), UpgradeSlotType.Upgrade);
     }
 
-
-    private void CreateInventory(Vector2 bottomLeft, Vector2 gridSize, InventorySlotType slotType)
+    private void CreateInventory(Vector2 bottomLeft, Vector2 gridSize, UpgradeSlotType slotType)
     {
         for (int i = 0; i < gridSize.x; i++)
         {
@@ -58,13 +56,13 @@ public class TokenScreen : MonoBehaviour
             {
                 var uiItem = Instantiate
                 (
-                    InventorySlot, 
+                    UpgradeSlotPrefab, 
                     Vector3.zero, 
-                    Quaternion.identity, 
-                    upgradeCanvas.gameObject.transform
+                    Quaternion.identity,
+                    transform
                 );
 
-                var slot = uiItem.GetComponent<InventorySlot>();
+                var slot = uiItem.GetComponent<UpgradeStorageSlot>();
                 slot.Init(new Vector2(i, j), slotType);
 
                 var rectTrans = uiItem.GetComponent<RectTransform>();
@@ -92,15 +90,15 @@ public class TokenScreen : MonoBehaviour
             }
         }
 
-        if (TryFindFirstAvailableSlot(InventorySlotType.Storage, out var slot))
+        if (TryFindFirstAvailableSlot(UpgradeSlotType.Storage, out var slot))
         {
-            var newToken = Instantiate(UpgradeToken, slot.transform.position, Quaternion.identity, upgradeCanvas.transform);
+            var newToken = Instantiate(UpgradeTokenPrefab, slot.transform.position, Quaternion.identity, transform);
             newToken.transform.localScale *= TileSize;
 
             var upgradeComponent = newToken.GetComponent<UpgradeToken>();
             var modifierData = (ModifierData)Resources.Load($"Modifiers/Data/{modifierTypeString.ToLower()}");
             upgradeComponent.MyWeapon = Enhanceable;
-            upgradeComponent.MySlot = InventorySlotType.Storage;
+            upgradeComponent.MySlot = UpgradeSlotType.Storage;
             upgradeComponent.Init(modifierData);
 
             slot.currentToken = upgradeComponent;
@@ -112,7 +110,7 @@ public class TokenScreen : MonoBehaviour
         }
     }
 
-    private bool TryFindFirstAvailableSlot(InventorySlotType slotType, out InventorySlot slot)
+    private bool TryFindFirstAvailableSlot(UpgradeSlotType slotType, out UpgradeStorageSlot slot)
     {
         slot = null;
 
@@ -137,7 +135,7 @@ public class TokenScreen : MonoBehaviour
         List<RaycastResult> results = new();
         graphicRaycaster.Raycast(pointerData, results);
 
-        InventorySlot inventorySlot = null;
+        UpgradeStorageSlot inventorySlot = null;
         UpgradeToken upgradeToken = null;
 
         foreach (var result in results)
@@ -145,7 +143,7 @@ public class TokenScreen : MonoBehaviour
             switch (result.gameObject.tag)
             {
                 case "InventorySlot":
-                    inventorySlot = result.gameObject.GetComponent<InventorySlot>();
+                    inventorySlot = result.gameObject.GetComponent<UpgradeStorageSlot>();
                     break;
                 case "UIItem":
                     upgradeToken = result.gameObject.GetComponent<UpgradeToken>();
@@ -217,13 +215,8 @@ public class TokenScreen : MonoBehaviour
 
     private void Update()
     {
-        HandleUIInteraction();   
-        
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            upgradeCanvas.enabled = !upgradeCanvas.enabled;
-        }        
-        
+        HandleUIInteraction();
+
         if (Input.GetKeyDown(KeyCode.G))
         {
             CreateToken("RapidFire");

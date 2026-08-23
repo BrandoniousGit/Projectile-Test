@@ -1,3 +1,4 @@
+using DamageNumbersPro;
 using UnityEngine;
 using static Globals;
 
@@ -17,7 +18,7 @@ public class PrismoidK : EnemyBase
             attackTimer = attackCooldown;
 
             var bulletRb = Instantiate(enemyBullet, transform.position, Quaternion.LookRotation(PlayerManager.Instance.GetPlayerPosition() - transform.position)).GetComponent<BulletBase>();
-            bulletRb.SetData(new BulletData
+            bulletRb.Init(new BulletData
             {
                 Damage = bulletDamage,
                 BulletSpeed = bulletSpeed,
@@ -40,7 +41,7 @@ public class PrismoidK : EnemyBase
 
     protected override void Update()
     {
-        if (IsAlive)
+        if (IsAlive && !isBlind)
         {
             base.Update();
 

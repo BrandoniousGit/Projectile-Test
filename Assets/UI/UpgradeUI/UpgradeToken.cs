@@ -16,9 +16,9 @@ public class UpgradeToken : MonoBehaviour
 
     public ModifierBase MyModifer;
     public EnhanceableBase MyWeapon;
-    public InventorySlotType MySlot;
+    public UpgradeSlotType MySlot;
 
-    public bool UpgradeIsEnabled => MyWeapon.gameObject.activeSelf && MySlot == InventorySlotType.Upgrade;
+    public bool UpgradeIsEnabled => MyWeapon.gameObject.activeSelf && MySlot == UpgradeSlotType.Upgrade;
 
     public void Init(string upgradeName, string description, int level, Rarity itemRarity)
     {

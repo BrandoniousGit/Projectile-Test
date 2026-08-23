@@ -38,6 +38,11 @@ public class PlayerManager : MonoBehaviour, IDamageable
         }
     }
 
+    public bool GetPlayerFrozen()
+    {
+        return PlayerInstance.GetPlayerFrozen();
+    }
+
     public Vector3 GetPlayerPosition()
     {
         return PlayerInstance.transform.position;
@@ -66,6 +71,12 @@ public class PlayerManager : MonoBehaviour, IDamageable
 
             SetPlayerFrozen(false);
         }
+    }
+
+    private void KillPlayer()
+    {
+        health = 0;
+        timer = 0.4f;
     }
 
     private void UpdateHealthBar()
@@ -104,9 +115,14 @@ public class PlayerManager : MonoBehaviour, IDamageable
     {
         UpdateHealthBar();
 
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKeyDown(KeyCode.O))
         {
             RespawnPlayer();
+        }        
+        
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            KillPlayer();
         }
     }
 }

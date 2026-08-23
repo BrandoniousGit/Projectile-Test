@@ -1,3 +1,4 @@
+using DamageNumbersPro;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,7 @@ using static Globals;
 
 public class EnemyBase : MonoBehaviour, IDamageable
 {
-    public bool IsAlive { get; set; }
+    public bool IsAlive { get; private set; }
 
     public float maxHealth;
     public float health;
@@ -15,7 +16,10 @@ public class EnemyBase : MonoBehaviour, IDamageable
     public float detectionRange = -1;
     public float attackRange = -1;
     public float attackCooldown;
-    public bool ShouldLookAtPlayer;
+    public bool isBlind;
+    public DamageNumber numberPrefab;
+
+    public float headMulti = 1, armorMulti = 1, limbMulti = 1;
 
     public NavMeshAgent Agent;
 
@@ -28,8 +32,30 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
     public void ReceiveDamage(float damage)
     {
+        if (IsAlive)
+        {
+            DamageNumber damageNumber = numberPrefab.Spawn(transform.position, damage);
+        }
+
         health -= damage;
         timer = 0.4f;
+    }
+
+    public float GetLimbMulti(LimbType limbType)
+    {
+        switch (limbType)
+        {
+            case LimbType.Head:
+                return headMulti;            
+            case LimbType.Body:
+                return 1;            
+            case LimbType.Armor:
+                return armorMulti;            
+            case LimbType.Limb:
+                return limbMulti;
+            default:
+                return 1;
+        }
     }
 
     protected virtual void OnEnable()
@@ -41,7 +67,7 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
     protected virtual void Update()
     {
-        if (ShouldLookAtPlayer)
+        if (!isBlind)
         {
             TryLookAtPlayer(out _);
         }
@@ -66,6 +92,7 @@ public class EnemyBase : MonoBehaviour, IDamageable
         if (health <= 0 && IsAlive)
         {
             IsAlive = false;
+            gameObject.layer = LayerMask.NameToLayer("EnemyDead");
             StartCoroutine("CleanUpAfter", 5.0f);
 
             Rigidbody[] rigidbodies = gameObject.GetComponentsInChildren<Rigidbody>();

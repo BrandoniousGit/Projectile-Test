@@ -56,6 +56,6 @@ public class BulletBasedModifier<T> : ModifierBase<T> where T : ModifierData
 
         var bulletObj = Instantiate(BulletGO, pos, Quaternion.LookRotation(forward), null);
         var bulletBase = bulletObj.GetComponent<BulletBase>();
-        bulletBase.SetData(data);
+        bulletBase.Init(data);
     }
 }

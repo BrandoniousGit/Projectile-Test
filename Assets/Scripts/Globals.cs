@@ -105,7 +105,7 @@ public static class Globals
     {
         Player,
         Enemy,
-        Chaotic
+        None
     }
 
     public enum EnemyState
@@ -113,6 +113,14 @@ public static class Globals
         Idle,
         Chasing,
         Attacking
+    }
+
+    public enum LimbType
+    {
+        Head,
+        Body,
+        Limb,
+        Armor
     }
 
     public enum ObjectiveType
@@ -189,6 +197,21 @@ public static class Globals
             default:
                 return "";
         }
+    }
+    #endregion
+
+    #region levelgen stuff
+    public enum LevelType
+    {
+        Interior,
+        Exterior,
+        InAndOut
+    }    
+    
+    public enum LevelExpansionType
+    {
+        Expansive,
+        Linear
     }
     #endregion
 }

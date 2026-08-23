@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6766550635880057029}
   - component: {fileID: 4520541530731219543}
   m_Layer: 5
-  m_Name: InventorySlot
+  m_Name: UpgradeSlot
   m_TagString: InventorySlot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

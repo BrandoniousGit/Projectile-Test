@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6082157423045639384}
   - component: {fileID: 1051959404538623397}
   - component: {fileID: 6094896228310653093}
-  - component: {fileID: 1437387745340581263}
+  - component: {fileID: 7009929063404163779}
   - component: {fileID: 3994703151291582214}
   - component: {fileID: 2244952916231777639}
   m_Layer: 6
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 5128087347927462573}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.009, y: 0, z: 0.748}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -51,7 +51,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5128087347927462573}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -89,7 +89,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &1437387745340581263
+--- !u!135 &7009929063404163779
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -104,7 +104,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -152,7 +152,5 @@ MonoBehaviour:
   deathTimer: 5
   collisionMask:
     serializedVersion: 2
-    m_Bits: 129
+    m_Bits: 4225
   Team: 0
-  bulletDamage: 0
-  numberPrefab: {fileID: 7631150634818028903, guid: b475db9002d3a7748a349b43964e1614, type: 3}

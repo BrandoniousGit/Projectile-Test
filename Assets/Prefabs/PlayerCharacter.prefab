@@ -661,7 +661,7 @@ MonoBehaviour:
   noFricc: {fileID: 13400000, guid: 0d45db0985bf76e40945cc879db14b71, type: 2}
   healthBar: {fileID: 7086254415625650707}
   whiteBar: {fileID: 8185425252136693451}
-  maxHealth: 15
+  maxHealth: 100
   health: 0
 --- !u!1 &5347395322095034390
 GameObject:

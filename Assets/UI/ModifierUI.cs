@@ -30,7 +30,7 @@ public class ModifierUI : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.BackQuote))
         {
             ModifierCanvas.SetActive(!ModifierCanvas.activeSelf);
-            PlayerManager.Instance.SetPlayerFrozen(true);
+            PlayerManager.Instance.SetPlayerFrozen(!PlayerManager.Instance.GetPlayerFrozen());
         }
     }
 }

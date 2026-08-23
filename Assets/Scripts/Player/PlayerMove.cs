@@ -332,8 +332,13 @@ public class PlayerMove : MonoBehaviour
         if (!PlayerManager.Instance.IsAlive)
         {
             GetComponent<MeshCollider>().material = null;
-            rb.AddRelativeTorque(new Vector3(Random.Range(25, 50), Random.Range(25, 50), Random.Range(25, 50)));
+            rb.AddRelativeTorque(new Vector3(Random.Range(-30, 30), Random.Range(-30, 30), Random.Range(-30, 30)));
         }
+    }
+
+    public bool GetPlayerFrozen()
+    {
+        return isFrozen;
     }
 
     void LateUpdate()
