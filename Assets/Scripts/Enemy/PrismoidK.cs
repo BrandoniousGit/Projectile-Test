@@ -1,5 +1,6 @@
 using DamageNumbersPro;
 using UnityEngine;
+using Enums;
 using static Globals;
 
 public class PrismoidK : EnemyBase

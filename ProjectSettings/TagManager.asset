@@ -11,6 +11,7 @@ TagManager:
   - InventorySlot
   - UIItem
   - EventSystem
+  - KeypadButton
   layers:
   - Default
   - TransparentFX
@@ -26,8 +27,8 @@ TagManager:
   - EnemyDead
   - EnvironmentalDestructable
   - Outline
-  - 
-  - 
+  - DroppedItem
+  - Wall
   - 
   - 
   - 

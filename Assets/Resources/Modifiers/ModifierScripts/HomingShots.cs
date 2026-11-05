@@ -1,4 +1,4 @@
-using static Globals;
+using Enums;
 
 public class HomingShots : BasicBulletModifier
 {

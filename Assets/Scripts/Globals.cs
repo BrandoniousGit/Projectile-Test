@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using Enums;
 
 public static class Globals
 {
@@ -18,20 +19,6 @@ public static class Globals
         public float Bounces { get; set; }
         public Vector3? Position { get; set; }
         public Team BulletTeam { get; set; }
-    }
-
-    public enum ModifiesStat
-    {
-        None,
-        Damage,
-        BulletCount,
-        BulletSpeed,
-        FireRate,
-        Spread,
-        CooldownDuration,
-        Bounces,
-        HomingRange,
-        Gravity
     }
 
     public class WeaponStats
@@ -59,79 +46,6 @@ public static class Globals
         { Rarity.Outstanding, "#E5377A" },
         { Rarity.Majestic, "#6565ED" }
     };
-
-    #region enums
-    public enum Rarity
-    {
-        Frequent,
-        Infrequent,
-        Jolly,
-        Stupendous,
-        Outstanding,
-        Majestic
-    }    
-    
-    public enum EnhanceableItem
-    {
-        Gun,
-        Sword
-    }
-
-    public enum ModifierApplyType
-    {
-        None,
-        Additive,
-        Multiplicative
-    }        
-    
-    public enum GearType
-    {
-        Head = 1,
-        Chest = 2,
-        Legs = 3,
-        Feet = 4,
-        Accessory = 5
-    }
-
-    public enum GunType
-    {
-        Burst,        //Burst Firing
-        Single,       //Semi Automatic
-        BarrelSpin,   //Mini-gun Type
-        ChargeUp      //Charge before shot
-    }
-
-    public enum Team
-    {
-        Player,
-        Enemy,
-        None
-    }
-
-    public enum EnemyState
-    {
-        Idle,
-        Chasing,
-        Attacking
-    }
-
-    public enum LimbType
-    {
-        Head,
-        Body,
-        Limb,
-        Armor
-    }
-
-    public enum ObjectiveType
-    {
-        ClearRooms,
-        FindXItemsSmall,
-        FindXItemsLarge,
-        SeekEnemy,
-        BossStage
-    }
-    #endregion
 
     #region public static methods   
     public static string RemoveFileExtension(this string fileName, int extensionLength)
@@ -197,21 +111,6 @@ public static class Globals
             default:
                 return "";
         }
-    }
-    #endregion
-
-    #region levelgen stuff
-    public enum LevelType
-    {
-        Interior,
-        Exterior,
-        InAndOut
-    }    
-    
-    public enum LevelExpansionType
-    {
-        Expansive,
-        Linear
     }
     #endregion
 }

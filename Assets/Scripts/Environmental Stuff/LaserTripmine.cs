@@ -1,5 +1,5 @@
 using UnityEngine;
-using static Globals;
+using Enums;
 
 public class LaserTripmine : MonoBehaviour, IDamageable
 {

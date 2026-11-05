@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d852edabbffb32646a0427aadee49fd9, type: 3}
   m_Name: TestWeapon
   m_EditorClassIdentifier: 
-  m_model: {fileID: 0}
+  m_model: {fileID: 5128087347927462573, guid: 2d71650453585ac43825358237d736cc, type: 3}
   m_gunType: 1
   m_fullAuto: 1
   m_isHitscan: 0

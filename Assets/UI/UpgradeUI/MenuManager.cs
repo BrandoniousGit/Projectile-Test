@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class MenuManager : MonoBehaviour
 {
+    public static MenuManager Instance { get; private set; }
+
     private Canvas menuCanvas;
     private List<CanvasGroup> menuScreenGroups;
+    public Inventory PlayerInventory;
 
     private bool canvasIsActive;
 
@@ -17,6 +20,15 @@ public class MenuManager : MonoBehaviour
             menu.blocksRaycasts = false;
             menu.interactable = false;
         }
+    }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+            Destroy(gameObject);
+        else
+            DontDestroyOnLoad(this);
+        Instance = this;
     }
 
     public void Start()

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Enums;
 using static Globals;
 
 public class BasicBulletModifier : BulletBasedModifier<BasicModifierData>

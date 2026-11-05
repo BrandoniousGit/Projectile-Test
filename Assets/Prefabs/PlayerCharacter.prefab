@@ -846,7 +846,6 @@ MonoBehaviour:
   airDecel: 40
   jumpForce: 12
   dashStrength: 16
-  playerGravity: -23.5
   groundCheckDistance: 1.1
   sprintMoveSpeed: 9
   crouchMoveSpeed: 2.5
@@ -859,6 +858,7 @@ MonoBehaviour:
   sprinting: 0
   dashUsed: 0
   doubleJumpUsed: 0
+  playerGravity: {x: 0, y: -23.5, z: 0}
   groundMask:
     serializedVersion: 2
     m_Bits: 1
@@ -882,7 +882,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   interactDistance: 5
   interactionText: {fileID: 3032115800893788917}
-  fov: 85
+  fov: 70
 --- !u!1 &8578048260807236828
 GameObject:
   m_ObjectHideFlags: 0

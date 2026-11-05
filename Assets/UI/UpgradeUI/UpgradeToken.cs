@@ -2,8 +2,9 @@ using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using static Globals;
+using Enums;
 using static TokenScreen;
+using static Globals;
 
 public class UpgradeToken : MonoBehaviour
 {

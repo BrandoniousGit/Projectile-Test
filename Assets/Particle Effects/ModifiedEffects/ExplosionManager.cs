@@ -2,7 +2,7 @@ using DamageNumbersPro;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static Globals;
+using Enums;
 
 public class ExplosionManager : MonoBehaviour
 {

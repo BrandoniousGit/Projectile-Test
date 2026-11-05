@@ -4,8 +4,9 @@ public class PlayerMove : MonoBehaviour
 {
     [SerializeField] private Camera cam;
     [SerializeField] private Rigidbody rb;
-    [SerializeField] private float moveSpeed, groundAccel, airSpeed, airAccel, airDecel, jumpForce, dashStrength, playerGravity, groundCheckDistance, sprintMoveSpeed, crouchMoveSpeed, slideMinSpeed, maxSlopeAngle, slideGracePeriod, dashCooldown;
+    [SerializeField] private float moveSpeed, groundAccel, airSpeed, airAccel, airDecel, jumpForce, dashStrength, groundCheckDistance, sprintMoveSpeed, crouchMoveSpeed, slideMinSpeed, maxSlopeAngle, slideGracePeriod, dashCooldown;
     [SerializeField] private bool grounded, crouching, sprinting, dashUsed, doubleJumpUsed;
+    [SerializeField] private Vector3 playerGravity;
 
     private bool isFrozen = false;
 
@@ -299,7 +300,7 @@ public class PlayerMove : MonoBehaviour
 
         if (!IsOnSlope() || crouching || !PlayerManager.Instance.IsAlive)
         {
-            rb.linearVelocity += new Vector3(0, playerGravity * Time.deltaTime, 0);
+            rb.linearVelocity += new Vector3(playerGravity.x * Time.deltaTime, playerGravity.y * Time.deltaTime, playerGravity.z * Time.deltaTime);
         }
 
         if (dashTimer >= 0)

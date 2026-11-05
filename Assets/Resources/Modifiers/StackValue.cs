@@ -1,5 +1,5 @@
 using System;
-using static Globals;
+using Enums;
 
 public struct StackValue
 {

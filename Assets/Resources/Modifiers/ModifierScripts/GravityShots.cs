@@ -1,4 +1,5 @@
 using UnityEngine;
+using Enums;
 using static Globals;
 
 public class GravityShots : BasicBulletModifier

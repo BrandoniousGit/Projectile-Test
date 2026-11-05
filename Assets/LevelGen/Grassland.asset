@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: 
   LevelType: 1
-  SpawnTile: {fileID: 6479103530923734879, guid: f3e7ee55a95b4c54f90f204263c33e32, type: 3}
-  ExitTile: {fileID: 6479103530923734879, guid: f3e7ee55a95b4c54f90f204263c33e32, type: 3}
+  SpawnTile: {fileID: 5369263167824150501, guid: f3e7ee55a95b4c54f90f204263c33e32, type: 3}
+  ExitTile: {fileID: 5369263167824150501, guid: f824623d18019ed48964680d76c313fb, type: 3}
   Tiles:
-  - {fileID: 6479103530923734879, guid: f3e7ee55a95b4c54f90f204263c33e32, type: 3}
+  - {fileID: 5369263167824150501, guid: f3e7ee55a95b4c54f90f204263c33e32, type: 3}
   DoorPrefab: {fileID: 0}

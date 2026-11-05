@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static Globals;
+using Enums;
 
 [CreateAssetMenu(fileName = "New Environment", menuName = "LevelGen/New Environment")]
 public class Environment : ScriptableObject
@@ -10,5 +10,5 @@ public class Environment : ScriptableObject
     public GameObject SpawnTile;
     public GameObject ExitTile;
     public List<GameObject> Tiles;
-    public GameObject DoorPrefab;
+    public GameObject ConnectorPrefab;
 }

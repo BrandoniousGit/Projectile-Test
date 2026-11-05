@@ -2,7 +2,7 @@ using System.Net.Sockets;
 using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
-using static Globals;
+using Enums;
 
 public class CameraMove : MonoBehaviour
 {
@@ -46,7 +46,7 @@ public class CameraMove : MonoBehaviour
 
         var interactionTextString = string.Empty;
 
-        if (Physics.Raycast(new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + 0.4f, Camera.main.transform.position.z), Camera.main.transform.forward, out var hit, interactDistance, interactMask))
+        if (Physics.Raycast(new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, Camera.main.transform.position.z), Camera.main.transform.forward, out var hit, interactDistance, interactMask))
         {
             //Checks to see if it is an interactable
             if (hit.transform.TryGetComponent<Interactable>(out var component))

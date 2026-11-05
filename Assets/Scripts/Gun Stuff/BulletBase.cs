@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+using Enums;
 using static Globals;
 
 public class BulletBase : MonoBehaviour

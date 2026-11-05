@@ -18,6 +18,7 @@ public class Inventory : MonoBehaviour
     private List<InventorySlot> inventorySlots = new();
     private GameObject InventorySlotPrefab;
     private GameObject InventoryItemPrefab;
+    private GameObject DroppedItemInstancePrefab;
     private bool initialized;
 
     public TMP_Dropdown selectDropdown;
@@ -42,6 +43,7 @@ public class Inventory : MonoBehaviour
     {
         InventoryItemPrefab = (GameObject)Resources.Load("InventoryItem");
         InventorySlotPrefab = (GameObject)Resources.Load("InventorySlot");
+        DroppedItemInstancePrefab = (GameObject)Resources.Load("DroppedItemInstance");
 
         string[] guids = AssetDatabase.FindAssets("t:ItemData", new[] { "Assets/Resources/Items" });
 
@@ -148,12 +150,12 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void PickupItem(int itemId, int itemCount, bool createNewStackOnAdd = false)
+    public bool TryPickupItem(int itemId, int itemCount, bool createNewStackOnAdd = false)
     {
         if (!ItemLookup.ContainsKey(itemId))
         {
             Debug.LogError("Something has gone horribly fucking wrong and this item DOES NOT EXIST!!!!!");
-            return;
+            return false;
         }
 
         if (TryFindFirstAvailableSlot(itemId, out var slot, createNewStackOnAdd))
@@ -167,7 +169,7 @@ public class Inventory : MonoBehaviour
                     var excess = currentItem.itemCount + itemCount - ItemLookup[itemId].MaxStackSize;
                     currentItem.itemCount += itemCount - excess;
 
-                    PickupItem(itemId, excess, createNewStackOnAdd);
+                    TryPickupItem(itemId, excess, createNewStackOnAdd);
                 }
                 else
                 {
@@ -189,7 +191,7 @@ public class Inventory : MonoBehaviour
                     slot.currentItem = inventoryItem;
                     slot.isUsed = true;
 
-                    PickupItem(itemId, itemCount - newItemCount, createNewStackOnAdd);
+                    TryPickupItem(itemId, itemCount - newItemCount, createNewStackOnAdd);
                 }
                 else
                 {
@@ -199,10 +201,12 @@ public class Inventory : MonoBehaviour
                     slot.currentItem = inventoryItem;
                 }
             }
+            return true;
         }
         else
         {
             Debug.Log("No free inventory slot found!");
+            return false;
         }
     }
 
@@ -281,36 +285,12 @@ public class Inventory : MonoBehaviour
                     }
                 }
 
-                //// Split stack in half
-                //if (Input.GetMouseButtonDown(1))
-                //{
-                //    if (targetInventorySlot != null && targetInventorySlot.isUsed && targetInventoryItem.itemCount > 1)
-                //    {
-                //        var halfValue = Mathf.FloorToInt(targetInventoryItem.itemCount / 2);
-
-                //        var newItem = Instantiate(InventoryItemPrefab, targetInventorySlot.transform.position, Quaternion.identity, inventoryCanvas.transform);
-                //        newItem.transform.localScale *= TileSize;
-
-                //        var inventoryItem = newItem.GetComponent<InventoryItem>();
-                //        inventoryItem.Init(ItemLookup[targetInventorySlot.currentItem.GetItemId()], halfValue);
-
-                //        targetInventoryItem.itemCount -= halfValue;
-
-                //        selectedItem = newItem;
-                //    }
-                //    else
-                //    {
-                //        selectedItem = targetInventoryItem.gameObject;
-                //        selectedItem.transform.SetParent(inventoryCanvas.transform);
-                //        selectedItem.transform.SetAsLastSibling();
-
-                //        if (targetInventorySlot != null)
-                //        {
-                //            fallbackSlot = targetInventorySlot;
-                //            targetInventorySlot.currentItem = null;
-                //        }
-                //    }
-                //}
+                if (Input.GetKeyDown(KeyCode.Q))
+                {
+                    DropItem(targetInventoryItem);
+                    Destroy(targetInventoryItem.gameObject);
+                    targetInventorySlot.currentItem = null;
+                }
             }
         }
         // If holding an item
@@ -318,6 +298,8 @@ public class Inventory : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
+                var selectedItemScript = selectedItem.GetComponent<InventoryItem>();
+
                 if (targetInventorySlot != null && !targetInventorySlot.isUsed)
                 {
                     selectedItem.transform.position = targetInventorySlot.transform.position;
@@ -331,8 +313,6 @@ public class Inventory : MonoBehaviour
                 }
                 else if (targetInventorySlot != null && targetInventorySlot.isUsed)
                 {
-                    var selectedItemScript = selectedItem.GetComponent<InventoryItem>();
-
                     if (targetInventorySlot.currentItem.GetItemId() == selectedItemScript.GetItemId() && targetInventorySlot.currentItem.itemCount < targetInventoryItem.GetItemMaxStackSize())
                     {
                         var targetMaxSize = targetInventoryItem.GetItemMaxStackSize();
@@ -365,9 +345,8 @@ public class Inventory : MonoBehaviour
                 }
                 else if (targetInventorySlot == null)
                 {
-                    SetItemToFallback(targetInventoryItem);
-
-                    // TO BE REPLACED WITH "DropItem()"
+                    DropItem(selectedItemScript);
+                    Destroy(selectedItemScript.gameObject);
                 }
             }
         }
@@ -379,28 +358,25 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    private void SetItemToFallback(InventoryItem item)
-    {
-        selectedItem.transform.position = fallbackSlot.transform.position;
-        selectedItem.transform.SetParent(fallbackSlot.transform);
-        fallbackSlot.currentItem = item;
-        selectedItem.transform.localScale = Vector3.one * TileSize;
-
-        selectedItem = null;
-    }
-
     public void OnAddCheatedItemClicked()
     {
         var itemId = ItemLookup.FirstOrDefault(item => item.Value.ItemName == selectDropdown.options[selectDropdown.value].text).Key;
 
         if (int.TryParse(inputField.text, out var result))
         {
-            PickupItem(itemId, result, stackable.isOn);
+            TryPickupItem(itemId, result, stackable.isOn);
         }
         else
         {
-            PickupItem(itemId, 1, stackable.isOn);
+            TryPickupItem(itemId, 1, stackable.isOn);
         }
+    }
+
+    private void DropItem(InventoryItem item)
+    {
+        var droppedItem = Instantiate(DroppedItemInstancePrefab, Camera.main.transform.position, Quaternion.identity);
+        droppedItem.GetComponent<GroundItem>().Init(item.GetItemId(), item.itemCount);
+        droppedItem.GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * 15, ForceMode.Impulse);
     }
 
     private void Update()

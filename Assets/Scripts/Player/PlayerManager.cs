@@ -43,6 +43,11 @@ public class PlayerManager : MonoBehaviour, IDamageable
         return PlayerInstance.GetPlayerFrozen();
     }
 
+    public Vector3 GetPlayerLookDirection()
+    {
+        return Camera.main.transform.forward;
+    }
+
     public Vector3 GetPlayerPosition()
     {
         return PlayerInstance.transform.position;

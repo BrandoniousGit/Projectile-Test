@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
-using static Globals;
+using Enums;
 
 public class EnemyBase : MonoBehaviour, IDamageable
 {

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using DamageNumbersPro;
+using Enums;
 using static Globals;
 
 public class GunBase : EnhanceableBase

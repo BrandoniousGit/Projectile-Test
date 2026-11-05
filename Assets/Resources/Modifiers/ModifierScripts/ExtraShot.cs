@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using Enums;
 using static Globals;
 
 public class ExtraShot : BulletBasedModifier<ExtraShotData>

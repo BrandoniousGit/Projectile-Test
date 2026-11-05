@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static Globals;
+using Enums;
 
 public class ModifierData : ScriptableObject
 {
